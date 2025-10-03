@@ -1,0 +1,23 @@
+# Игнорировать все .json файлы
+*.json
+
+# Игнорировать все бинарники
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+*.o
+*.obj
+*.a
+*.lib
+*.class
+*.pyc
+*.pyo
+*.pyd
+*.out
+*.elf
+*.app
+*.jar
+*.apk
+*.elf
