@@ -1,19 +1,19 @@
-#include "yt-dlp.hpp"
-#define DEBUG
+#include "yt-dlp.hpp" // for yt-dlp
+#define DEBUG         // for debug
 
 int main()
 {
     string url, setting_set, setting_get;
     int choice;
     int quality;
-    fs::path path = bp::search_path("yt-dlp");
-    if (!fs::exists(path))
+    fs::path path = bp::search_path("yt-dlp"); // for yt-dlp
+    if (!fs::exists(path))                     // examination of the existence of yt-dlp
     {
-        cout << "yt-dlp не найден" << endl;
+        cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
     }
 
-    while (true)
+    while (true) // menu
     {
         cout << "\t====Меню====" << endl;
         cout << "1. Скачать видео" << endl;
@@ -22,16 +22,16 @@ int main()
         cout << "4. о программе" << endl;
         cout << "5. Выход" << endl;
         cout << "Выберите действие: ";
-        cin >> choice;
-        cin.ignore();
-        if (choice == 1)
+        cin >> choice;   // choice
+        cin.ignore();    // for cin
+        if (choice == 1) // download video
         {
             cout << "Введите ссылку на видео: ";
-            getline(cin, url);
+            getline(cin, url); // url
             cout << "Введите качество видео: ";
-            cin >> quality;
-            video video1(url, quality, setting_set);
-            video1.download(url);
+            cin >> quality;                          // quality
+            video video1(url, quality, setting_set); // for video
+            video1.download(url);                    // download
 
             cout << "В разработке" << endl;
         }
@@ -43,7 +43,7 @@ int main()
         {
             cout << "В разработке" << endl;
         }
-        if (choice == 4)
+        if (choice == 4) // about
         {
             cout << "YtGrabber-TUI" << endl;
             cout << "Надстроками для yt-dlp" << endl;

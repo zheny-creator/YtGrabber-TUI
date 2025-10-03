@@ -1,30 +1,30 @@
-#include <iostream>
-#include <string>
-#include "json.hpp"
-#include <cstdlib>
-#include "Log.hpp"
-#include <boost/process.hpp>
-#include <boost/process/child.hpp>
-#include <boost/filesystem.hpp>
+#include <iostream>                // for cout
+#include <string>                  // for string
+#include "json.hpp"                // for json
+#include "Log.hpp"                 // for log
+#include <boost/process.hpp>       // for child
+#include <boost/process/child.hpp> // for child
+#include <boost/filesystem.hpp>    // for filesystem
 
-using json = nlohmann::json;
-using namespace std;
-namespace fs = boost::filesystem;
-namespace bp = boost::process;
+using json = nlohmann::json;      // for json
+using namespace std;              // for string
+namespace fs = boost::filesystem; // for filesystem
+namespace bp = boost::process;    // for child
 
-class video
+class video // Class video
 {
-private:
-    string url;
-    int quality;
-    string subtitles;
+private:              // Private members
+    string url;       // url
+    int quality;      // quality
+    string subtitles; // subtitles
 
-public:
+public: // Public members
+        // Constructor
     video(const string &url, int &quality, string &subtitles) : url(url), quality(quality), subtitles(subtitles) {}
 
-    void download(const string &url)
+    void download(const string &url) // Function download
     {
-        bp::child c(bp::search_path("yt-dlp"), bp::args({url}));
-        c.wait();
+        bp::child c(bp::search_path("yt-dlp"), bp::args({url})); // Run yt-dlp
+        c.wait();                                                // Wait for yt-dlp to finish
     }
 };
