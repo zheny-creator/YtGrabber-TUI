@@ -6,6 +6,13 @@ int main()
     string url, setting_set, setting_get;
     int choice;
     int quality;
+    fs::path path = bp::search_path("yt-dlp");
+    if (!fs::exists(path))
+    {
+        cout << "yt-dlp не найден" << endl;
+        return 1;
+    }
+
     while (true)
     {
         cout << "\t====Меню====" << endl;
@@ -14,6 +21,7 @@ int main()
         cout << "3. Настройки" << endl;
         cout << "4. о программе" << endl;
         cout << "5. Выход" << endl;
+        cout << "Выберите действие: ";
         cin >> choice;
         cin.ignore();
         if (choice == 1)

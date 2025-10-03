@@ -4,9 +4,12 @@
 #include <cstdlib>
 #include "Log.hpp"
 #include <boost/process.hpp>
+#include <boost/process/child.hpp>
+#include <boost/filesystem.hpp>
 
 using json = nlohmann::json;
 using namespace std;
+namespace fs = boost::filesystem;
 namespace bp = boost::process;
 
 class video
