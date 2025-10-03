@@ -1,10 +1,11 @@
-#include "include/yt-dlp-settings.hpp"
+#include "yt-dlp.hpp"
 #define DEBUG
 
 int main()
 {
     string url, setting_set, setting_get;
     int choice;
+    int quality;
     while (true)
     {
         cout << "\t====Меню====" << endl;
@@ -17,6 +18,13 @@ int main()
         cin.ignore();
         if (choice == 1)
         {
+            cout << "Введите ссылку на видео: ";
+            getline(cin, url);
+            cout << "Введите качество видео: ";
+            cin >> quality;
+            video video1(url, quality, setting_set);
+            video1.download(url);
+
             cout << "В разработке" << endl;
         }
         if (choice == 2)
@@ -32,6 +40,7 @@ int main()
             cout << "YtGrabber-TUI" << endl;
             cout << "Надстроками для yt-dlp" << endl;
             cout << "Автор: Женя Бородин" << endl;
+            cout << "Верия: 1.0 Alpha 1" << endl;
         }
         if (choice == 5)
         {
