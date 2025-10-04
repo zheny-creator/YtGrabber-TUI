@@ -31,7 +31,7 @@ int main()
             cout << "Введите качество видео: ";
             cin >> quality;                          // quality
             video video1(url, quality, setting_set); // for video
-            video1.download(url);                    // download
+            video1.download(url, quality);           // download
 
             cout << "В разработке" << endl;
         }

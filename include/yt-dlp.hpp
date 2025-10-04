@@ -22,9 +22,9 @@ public: // Public members
         // Constructor
     video(const string &url, int &quality, string &subtitles) : url(url), quality(quality), subtitles(subtitles) {}
 
-    void download(const string &url) // Function download
+    void download(const string &url, int &quality) // Function download
     {
-        bp::child c(bp::search_path("yt-dlp"), bp::args({url})); // Run yt-dlp
-        c.wait();                                                // Wait for yt-dlp to finish
+        bp::child c(bp::search_path("yt-dlp"), bp::args({"-f", "bestvideo[height<=" + to_string(quality) + "]", url})); // Run yt-dlp
+        c.wait();                                                                                                       // Wait for yt-dlp to finish
     }
 };
