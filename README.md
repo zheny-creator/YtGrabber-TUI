@@ -13,7 +13,7 @@
 
 Стандарт языка: C++11
 
-Библиотеки C++:
+Библиотеки C++ для сборки проекта:
 
 Boost (filesystem, system, thread, process)
 
@@ -47,7 +47,7 @@ C++ Compiler: g++
 
 Language Standard: C++11
 
-C++ Libraries:
+C++ Libraries for build project:
 
 Boost (filesystem, system, thread, process)
 
