@@ -28,3 +28,18 @@ public: // Public members
         c.wait();                                                                                                       // Wait for yt-dlp to finish
     }
 };
+class audio
+{
+private:
+    string url; // url
+
+public:
+    audio(const string &url) : url(url) {} // Constructor
+
+    // Function download audio
+    void download(const string &url)
+    {
+        bp::child c(bp::search_path("yt-dlp"), bp::args({"-f", "bestaudio/best", url}));
+        c.wait();
+    }
+};

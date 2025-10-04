@@ -32,12 +32,13 @@ int main()
             cin >> quality;                          // quality
             video video1(url, quality, setting_set); // for video
             video1.download(url, quality);           // download
-
-            cout << "В разработке" << endl;
         }
         if (choice == 2)
         {
-            cout << "В разработке" << endl;
+            cout << "Введите ссылку на видео: ";
+            getline(cin, url);   // url
+            audio audio(url);    // for audio
+            audio.download(url); // download
         }
         if (choice == 3)
         {
