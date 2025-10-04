@@ -49,7 +49,7 @@ int main()
             cout << "YtGrabber-TUI" << endl;
             cout << "Надстроками для yt-dlp" << endl;
             cout << "Автор: Женя Бородин" << endl;
-            cout << "Верия: 1.0 Alpha 1" << endl;
+            cout << "Верия: 1.0 Alpha 2" << endl;
         }
         if (choice == 5)
         {
