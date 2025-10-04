@@ -4,6 +4,7 @@
 int main()
 {
     string url, setting_set, setting_get;
+    pt::ptree config;
     int choice;
     int quality;
     fs::path path = bp::search_path("yt-dlp"); // for yt-dlp
@@ -12,8 +13,9 @@ int main()
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
     }
-
-    while (true) // menu
+    settings_to_json json(config); // for settings
+    json.create_json_settings();   // create json settings
+    while (true)                   // menu
     {
         cout << "\t====Меню====" << endl;
         cout << "1. Скачать видео" << endl;
@@ -42,7 +44,22 @@ int main()
         }
         if (choice == 3)
         {
-            cout << "В разработке" << endl;
+            while (true)
+            {
+                cout << "1. Качество видео" << endl;
+                cout << "2. расположение ffmpeg" << endl;
+                cout << "3. расположение yt-dlp" << endl;
+                cout << "4. превью видео" << endl;
+                cout << "5. выход" << endl;
+                cout << "Выберите действие: ";
+                cin >> choice; // choice
+                cin.ignore();
+                if (choice == 5)
+                {
+                    break;
+                } // quality
+            }
+            continue;
         }
         if (choice == 4) // about
         {

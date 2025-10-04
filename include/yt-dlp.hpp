@@ -1,15 +1,13 @@
-#include <iostream>                // for cout
-#include <string>                  // for string
-#include "json.hpp"                // for json
+#include <iostream> // for cout
+#include <string>   // for string
+#include "Settings.hpp"
 #include "Log.hpp"                 // for log
 #include <boost/process.hpp>       // for child
 #include <boost/process/child.hpp> // for child
 #include <boost/filesystem.hpp>    // for filesystem
-
-using json = nlohmann::json;      // for json
-using namespace std;              // for string
-namespace fs = boost::filesystem; // for filesystem
-namespace bp = boost::process;    // for child
+using namespace std;               // for string
+namespace fs = boost::filesystem;  // for filesystem
+namespace bp = boost::process;     // for child
 
 class video // Class video
 {
