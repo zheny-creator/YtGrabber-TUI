@@ -15,9 +15,11 @@ int main()
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
     }
-    settings_to_json json(config);     // for settings
-    json.create_json_settings(config); // create json settings
-    while (true)                       // menu
+    const char *home = std::getenv("HOME");
+    fs::path(home) / ".config" / "YtGrabber-TUI" / "config.json";
+    settings_to_json json(config);   // for settings
+    json.load_json_settings(config); // create json settings
+    while (true)                     // menu
     {
         cout << "\t====Меню====" << endl;
         cout << "1. Скачать видео" << endl;
@@ -134,19 +136,21 @@ int main()
                         } // quality
                     }
                 }
-                break;
             }
-            if (choice == 4) // about
-            {
-                cout << "YtGrabber-TUI" << endl;
-                cout << "Надстроками для yt-dlp" << endl;
-                cout << "Автор: Женя Бородин" << endl;
-                cout << "Верия: 1.0 Alpha 2" << endl;
-            }
-            if (choice == 5)
-            {
-                break;
-            }
+            break;
+        }
+        if (choice == 4) // about
+        {
+            cout << "YtGrabber-TUI" << endl;
+            cout << "Надстроками для yt-dlp" << endl;
+            cout << "Автор: Женя Бородин" << endl;
+            cout << "Верия: 1.0 Alpha 2" << endl;
+        }
+        if (choice == 5)
+
+        {
+            break;
+            return 0;
         }
     }
     return 0;
