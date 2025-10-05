@@ -1,6 +1,5 @@
 #include <iostream>                            // for cout
 #include <string>                              // for string
-#include "json.hpp"                            // for json
 #include "Log.hpp"                             // for log
 #include <boost/process.hpp>                   // for child
 #include <boost/process/child.hpp>             // for child
@@ -8,7 +7,6 @@
 #include <boost/property_tree/ptree.hpp>       // for ptree
 #include <boost/property_tree/json_parser.hpp> // for json_parser
 
-using json = nlohmann::json;         // for json
 using namespace std;                 // for string
 namespace fs = boost::filesystem;    // for filesystem
 namespace bp = boost::process;       // for child
@@ -22,7 +20,7 @@ private:
 public:
     settings_to_json(const pt::ptree &config) : config(config) {}
 
-    void create_json_settings()
+    void create_json_settings(pt::ptree &config)
     {
         if (fs::exists("config.json"))
         {
@@ -35,7 +33,7 @@ public:
             pt::ptree quality_video;
 
             quality_video.put("enabled", false);
-            quality_video.put("quality", "1080");
+            quality_video.put("quality", 1080);
             config.add_child("quality", quality_video);
 
             pt::ptree enabled_thumbnail;
