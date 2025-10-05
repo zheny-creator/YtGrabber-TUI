@@ -28,7 +28,7 @@ nlohmann/json (json.hpp)
 
 # Сборка
 ```Shell
-g++ -fdiagnostics-color=always -g -Iinclude src/main.cpp -o main -lboost_system -lboost_filesystem -lpthread -lfmt
+make
 ```
 
 ---
@@ -64,5 +64,5 @@ External Tools: yt-dlp (latest version)
 # Build
 
 ```Shell
-g++ -fdiagnostics-color=always -g -Iinclude src/main.cpp -o main -lboost_system -lboost_filesystem -lpthread -lfmt
+make
 ```
