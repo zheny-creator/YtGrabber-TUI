@@ -67,23 +67,86 @@ int main()
                 cout << "Выберите действие: ";
                 cin >> choice; // choice
                 cin.ignore();
-                if (choice == 5)
+                if (choice == 4)
                 {
                     break;
                 } // quality
+                else if (choice == 1)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Изменить качество видео" << endl;
+                        cout << "4. Назад" << endl;
+                        cout << "Выберите действие: "; // quality
+                        cin >> choice;                 // choice
+                        cin.ignore();
+                        if (choice == 1)
+                        {
+                            if (config.get<string>("quality.enabled", "false") == "false")
+                            {
+                                config.put("quality.enabled", "true");
+                                pt::write_json("config.json", config);
+                                cout << "Качество видео включено" << endl;
+                                continue;
+                            } // enabled
+                            else
+                            {
+                                cout << "Качество видео уже включено" << endl;
+                                continue;
+                            } // if video enabled
+                        }
+                        if (choice == 2)
+                        {
+                            if (config.get<string>("quality.enabled", "false") == "true")
+                            {
+                                config.put("quality.enabled", "false");
+                                pt::write_json("config.json", config);
+                                cout << "Качество видео выключено" << endl;
+                                continue;
+                            } // enabled
+                            else
+                            {
+                                cout << "Качество видео уже выключено" << endl;
+                                continue;
+                            } // if video enabled
+                        }
+                        if (choice == 3)
+                        {
+                            if (config.get<string>("quality.enabled", "false") == "true")
+                            {
+                                cout << "Введите качество видео: ";
+                                cin >> quality_video;
+                                config.put("quality.quality", quality_video);
+                                pt::write_json("config.json", config);
+                                continue;
+                            } // quality
+                            else
+                            {
+                                if (config.get<string>("quality.enabled", "false") == "false")
+                                {
+                                    cout << "Качество видео выключено" << endl;
+                                    continue;
+                                }
+                            }
+
+                        } // quality
+                    }
+                }
+                break;
             }
-            continue;
-        }
-        if (choice == 4) // about
-        {
-            cout << "YtGrabber-TUI" << endl;
-            cout << "Надстроками для yt-dlp" << endl;
-            cout << "Автор: Женя Бородин" << endl;
-            cout << "Верия: 1.0 Alpha 2" << endl;
-        }
-        if (choice == 5)
-        {
-            break;
+            if (choice == 4) // about
+            {
+                cout << "YtGrabber-TUI" << endl;
+                cout << "Надстроками для yt-dlp" << endl;
+                cout << "Автор: Женя Бородин" << endl;
+                cout << "Верия: 1.0 Alpha 2" << endl;
+            }
+            if (choice == 5)
+            {
+                break;
+            }
         }
     }
     return 0;
