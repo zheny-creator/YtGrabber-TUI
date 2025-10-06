@@ -25,7 +25,7 @@ public:
     {
         cout << "Создание файла настроек..." << endl;
         const char *home = getenv("HOME");
-        fs::path config_dir = fs::path(home) / ".config" / "YtGrabber-TUI";
+        fs::path config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
         fs::create_directories(config_dir);
         fs::path config_file = config_dir / "config.json";
 
@@ -59,7 +59,7 @@ public:
     {
 
         const char *home = std::getenv("HOME");
-        fs::path config_dir = fs::path(home) / ".config" / "YtGrabber-TUI" / "config.json";
+        fs::path config_dir = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
 
         if (!fs::exists(config_dir))
         {

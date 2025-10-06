@@ -3,7 +3,7 @@
 
 int main()
 {
-    string url, setting_set, setting_get;
+    string url, setting_set, setting_get, path_ffmpeg;
     pt::ptree config;
     int choice;
     int quality;
@@ -16,7 +16,7 @@ int main()
         return 1;
     }
     const char *home = std::getenv("HOME");
-    fs::path(home) / ".config" / "YtGrabber-TUI" / "config.json";
+    fs::path config_dir = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
     settings_to_json json(config);   // for settings
     json.load_json_settings(config); // create json settings
     while (true)                     // menu
@@ -89,7 +89,7 @@ int main()
                             if (config.get<string>("quality.enabled", "false") == "false")
                             {
                                 config.put("quality.enabled", "true");
-                                pt::write_json("config.json", config);
+                                pt::write_json(config_dir.string(), config);
                                 cout << "Качество видео включено" << endl;
                                 continue;
                             } // enabled
@@ -104,7 +104,7 @@ int main()
                             if (config.get<string>("quality.enabled", "false") == "true")
                             {
                                 config.put("quality.enabled", "false");
-                                pt::write_json("config.json", config);
+                                pt::write_json(config_dir.string(), config);
                                 cout << "Качество видео выключено" << endl;
                                 continue;
                             } // enabled
@@ -121,7 +121,7 @@ int main()
                                 cout << "Введите качество видео: ";
                                 cin >> quality_video;
                                 config.put("quality.quality", quality_video);
-                                pt::write_json("config.json", config);
+                                pt::write_json(config_dir.string(), config);
                                 continue;
                             } // quality
                             else
@@ -136,10 +136,66 @@ int main()
                         } // quality
                     }
                 }
+                else if (choice == 2)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Изменить путь" << endl;
+                        if (choice == 1)
+                        {
+                            if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
+                            {
+                                config.put("Custom Path to ffmpeg.enabled", "true");
+                                pt::write_json(config_dir.string(), config);
+                                cout << "Путь к ffmpeg включен" << endl;
+                                continue;
+                            } // enabled
+                            else
+                            {
+                                cout << "Путь к ffmpeg уже включен" << endl;
+                            }
+                            if (choice == 2)
+                            {
+                                if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
+                                {
+                                    config.put("Custom Path to ffmpeg.enabled", "false");
+                                    pt::write_json(config_dir.string(), config);
+                                    cout << "Путь к ffmpeg выключен" << endl;
+                                    continue;
+                                } // enabled
+                                else
+                                {
+                                    cout << "Путь к ffmpeg уже выключен" << endl;
+                                }
+                            }
+                            if (choice == 3)
+                            {
+                                if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
+                                {
+                                    cout << "Введите путь к ffmpeg: ";
+                                    cin >> path_ffmpeg;
+                                    config.put("Custom Path to ffmpeg.path", path_ffmpeg);
+                                    pt::write_json(config_dir.string(), config);
+                                    continue;
+                                } // path
+
+                                else
+                                {
+                                    if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
+                                    {
+                                        cout << "Путь к ffmpeg выключен" << endl;
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            break;
         }
-        if (choice == 4) // about
+        else if (choice == 4) // about
         {
             cout << "YtGrabber-TUI" << endl;
             cout << "Надстроками для yt-dlp" << endl;
@@ -147,11 +203,8 @@ int main()
             cout << "Верия: 1.0 Alpha 2" << endl;
         }
         if (choice == 5)
-
         {
             break;
-            return 0;
         }
     }
-    return 0;
 }
