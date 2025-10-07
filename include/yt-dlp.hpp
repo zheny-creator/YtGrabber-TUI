@@ -5,9 +5,10 @@
 #include <boost/process.hpp>       // for child
 #include <boost/process/child.hpp> // for child
 #include <boost/filesystem.hpp>    // for filesystem
-using namespace std;               // for string
-namespace fs = boost::filesystem;  // for filesystem
-namespace bp = boost::process;     // for child
+#include <vector>
+using namespace std;              // for string
+namespace fs = boost::filesystem; // for filesystem
+namespace bp = boost::process;    // for child
 
 class video // Class video
 {
@@ -15,15 +16,32 @@ private:              // Private members
     string url;       // url
     int quality;      // quality
     string subtitles; // subtitles
+    pt::ptree config; // config
 
 public: // Public members
         // Constructor
-    video(const string &url, int &quality, string &subtitles) : url(url), quality(quality), subtitles(subtitles) {}
+    video(const string &url, int &quality, string &subtitles, const pt::ptree &config) : url(url), quality(quality), subtitles(subtitles), config(config) {}
 
-    void download(const string &url, int &quality) // Function download
+    void download(const string &url, int &quality, const pt::ptree &config) // Function download
     {
-        bp::child c(bp::search_path("yt-dlp"), bp::args({"-f", "bestvideo[height<=" + to_string(quality) + "]", url})); // Run yt-dlp
-        c.wait();                                                                                                       // Wait for yt-dlp to finish
+        string command;
+        string path_ffmpeg;
+        std::vector<string> args = {
+            "-f", "bestvideo[height<=" + to_string(quality) + "]",
+            command,
+            url};
+        if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
+        {
+            path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg") + " ";
+            args.insert(args.begin(), "--ffmpeg-location");
+            args.insert(args.begin(), path_ffmpeg);
+        }
+        cout << "Выполняется команда: yt-dlp ";
+        for (const auto &a : args)
+            cout << a << " ";
+        cout << endl;
+        bp::child c(bp::search_path("yt-dlp"), bp::args(args)); // Run yt-dlp
+        c.wait();                                               // Wait for yt-dlp to finish
     }
 };
 class audio
