@@ -32,16 +32,16 @@ public: // Public members
             url};
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {
-            path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg") + " ";
-            args.insert(args.begin(), "--ffmpeg-location");
-            args.insert(args.begin(), path_ffmpeg);
+            path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg");
+            args.insert(args.begin(), "\"" + path_ffmpeg + "\"");
+            args.insert(args.begin(), "--ffmpeg-location=");
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
             cout << a << " ";
         cout << endl;
-        bp::child c(bp::search_path("yt-dlp"), bp::args(args)); // Run yt-dlp
-        c.wait();                                               // Wait for yt-dlp to finish
+        bp::child c(bp::search_path("yt-dlp"), bp::args(args), bp::start_dir = "/home/zhenya/"); // Run yt-dlp
+        c.wait();                                                                                // Wait for yt-dlp to finish
     }
 };
 class audio
