@@ -70,7 +70,7 @@ int main()
                 cout << "Выберите действие: ";
                 cin >> choice; // choice
                 cin.ignore();
-                if (choice == 4)
+                if (choice == 5)
                 {
                     break;
                 } // quality
@@ -195,6 +195,53 @@ int main()
                                     continue;
                                 }
                             }
+                        }
+                        else if (choice == 4)
+                        {
+                            break;
+                        }
+                    }
+                }
+                if (choice == 4)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Назад" << endl;
+                        cout << "Выберите действие: "; // preview
+                        cin >> choice;                 // choice
+                        cin.ignore();
+                        if (choice == 1)
+                        {
+                            if (config.get<string>("thumbnail.enabled", "false") == "false")
+                            {
+                                config.put("thumbnail.enabled", "true");
+                                pt::write_json(config_dir.string(), config);
+                                cout << "Предпросмотр включен" << endl;
+                            }
+                            else
+                            {
+                                cout << "Предпросмотр уже включен" << endl;
+                            }
+                        }
+                        if (choice == 2)
+                        {
+                            if (config.get<string>("thumbnail.enabled", "false") == "true")
+                            {
+                                config.put("thumbnail.enabled", "false");
+                                pt::write_json(config_dir.string(), config);
+                                cout << "Предпросмотр выключен" << endl;
+                            }
+                            else
+                            {
+                                cout << "Предпросмотр уже выключен" << endl;
+                            }
+                        }
+                        if (choice == 3)
+                        {
+                            break;
+                            ;
                         }
                     }
                 }
