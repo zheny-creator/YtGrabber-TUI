@@ -6,6 +6,7 @@
 #include <boost/process/child.hpp> // for child
 #include <boost/filesystem.hpp>    // for filesystem
 #include <vector>
+#include <new>
 using namespace std;              // for string
 namespace fs = boost::filesystem; // for filesystem
 namespace bp = boost::process;    // for child
@@ -27,10 +28,17 @@ public: // Public members
         string command;
         string path_ffmpeg;
         string yt_dlp_path = bp::search_path("yt-dlp").string();
-
-        vector<string> args = {
-            "-f", "bestvideo[height<=" + to_string(quality) + "]",
-            url};
+        vector<string> args; // Vector of arguments
+        try
+        {
+            vector<string> args = {
+                "-f", "bestvideo[height<=" + to_string(quality) + "]",
+                url};
+        }
+        catch (const bad_alloc &e)
+        {
+            cout << e.what() << "Ошибка выделения памяти" << endl;
+        }
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {
             path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg");
@@ -50,8 +58,15 @@ public: // Public members
         for (const auto &a : args)
             cout << a << " ";
         cout << endl;
-        bp::child c(yt_dlp_path, bp::args(args)); // Run yt-dlp
-        c.wait();                                 // Wait for yt-dlp to finish
+        try
+        {
+            bp::child c(yt_dlp_path, bp::args(args)); // Run yt-dlp
+            c.wait();                                 // Wait for yt-dlp to finish
+        }
+        catch (const bp::process_error &e)
+        {
+            cout << e.what() << "Ошибка запуска процесса!" << endl; // Handle process error
+        }
     }
 };
 class audio

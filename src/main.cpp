@@ -24,6 +24,11 @@ int main()
     fs::path config_file;
 #if defined(__linux__)
     const char *home = std::getenv("HOME");
+    if (!home)
+    {
+        std::cerr << "Профиль пользователя не был найден!" << std::endl;
+        return 1;
+    }
     config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
     config_file = config_dir / "config.json";
 
@@ -45,7 +50,7 @@ int main()
         cout << "1. Скачать видео" << endl;
         cout << "2. Скачать аудио" << endl;
         cout << "3. Настройки" << endl;
-        cout << "4. о программе" << endl;
+        cout << "4. О программе" << endl;
         cout << "5. Выход" << endl;
         cout << "Выберите действие: ";
         cin >> choice; // choic
