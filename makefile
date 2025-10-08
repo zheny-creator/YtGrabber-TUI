@@ -21,4 +21,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 clean:
 	rm -f yt-grabber-tui
-	rm -rf obj
+	rm -r obj
