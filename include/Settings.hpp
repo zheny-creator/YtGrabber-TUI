@@ -24,13 +24,34 @@ public:
     void create_json_settings(pt::ptree &config)
     {
         cout << "Создание файла настроек..." << endl;
+        fs::path config_dir;
+        fs::path config_file;
+#if defined(__linux__)
         const char *home = getenv("HOME");
-        fs::path config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
-        fs::create_directories(config_dir);
-        fs::path config_file = config_dir / "config.json";
-
+        config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
+        try
+        {
+            fs::create_directories(config_dir);
+        }
+        catch (const fs::filesystem_error &e)
+        {
+            cerr << e.what() << "Ошибка создания директории" << std::endl;
+        }
+        config_file = config_dir / "config.json";
+#elif defined(_WIN32)
+        const char *home = std::getenv("USERPROFILE");
+        config_dir = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui";
+        try
+        {
+            fs::create_directories(config_dir);
+        }
+        catch (const fs::filesystem_error &e)
+        {
+            cerr << e.what() << "Ошибка создания директории" << std::endl;
+        }
+        config_file = config_dir / "config.json";
+#endif
         pt::ptree quality_video;
-
         quality_video.put("enabled", false);
         quality_video.put("quality", 1080);
         config.add_child("quality", quality_video);
@@ -42,33 +63,51 @@ public:
 
         pt::ptree custom_path_ffmpeg;
 
-        custom_path_ffmpeg.add("enabled", false);
-        custom_path_ffmpeg.add("path", "You path to ffmpeg");
+        custom_path_ffmpeg.put("enabled", false);
+        custom_path_ffmpeg.put("path", "You path to ffmpeg");
         config.add_child("Custom Path to ffmpeg", custom_path_ffmpeg);
 
         pt::ptree custom_path_yt_dlp;
 
-        custom_path_yt_dlp.add("enabled", false);
-        custom_path_yt_dlp.add("path", "You path to yt-dlp");
+        custom_path_yt_dlp.put("enabled", false);
+        custom_path_yt_dlp.put("path", "You path to yt-dlp");
         config.add_child("Custom Path to yt-dlp", custom_path_yt_dlp);
 
-        pt::write_json(config_file.string(), config);
+        try
+        {
+            pt::write_json(config_file.string(), config);
+        }
+        catch (const pt::json_parser::json_parser_error &e)
+        {
+            cerr << "Ошибка записи файла настроек: " << e.what() << endl;
+        }
     }
 
     void load_json_settings(pt::ptree &config)
     {
-
-        const char *home = std::getenv("HOME");
-        fs::path config_dir = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
-
-        if (!fs::exists(config_dir))
+        fs::path config_file;
+#if defined(__linux__)
+        const char *home = getenv("HOME");
+        config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
+#elif defined(_WIN32)
+        const char *home = std::getenv("USERPROFILE");
+        config_file = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui" / "config.json";
+#endif
+        if (!fs::exists(config_file))
         {
             create_json_settings(config);
         }
-        if (fs::exists(config_dir))
+        if (fs::exists(config_file))
         {
             cout << "Загрузка настроек..." << endl;
-            pt::read_json(config_dir.string(), config);
+            try
+            {
+                pt::read_json(config_file.string(), config);
+            }
+            catch (const pt::json_parser::json_parser_error &e)
+            {
+                cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
+            }
         }
         else
         {
