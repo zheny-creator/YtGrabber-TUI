@@ -135,7 +135,14 @@ int main()
                             if (config.get<string>("quality.enabled", "false") == "false")
                             {
                                 config.put("quality.enabled", "true");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Качество видео включено" << endl;
                                 continue;
                             } // enabled
@@ -150,7 +157,14 @@ int main()
                             if (config.get<string>("quality.enabled", "false") == "true")
                             {
                                 config.put("quality.enabled", "false");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Качество видео выключено" << endl;
                                 continue;
                             } // enabled
@@ -167,7 +181,14 @@ int main()
                                 cout << "Введите качество видео: ";
                                 cin >> quality_video;
                                 config.put("quality.quality", quality_video);
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 continue;
                             } // quality
                             else
@@ -209,7 +230,14 @@ int main()
                             if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
                             {
                                 config.put("Custom Path to ffmpeg.enabled", "true");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Путь к ffmpeg включен" << endl;
                                 continue;
                             } // enabled
@@ -223,7 +251,14 @@ int main()
                             if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
                             {
                                 config.put("Custom Path to ffmpeg.enabled", "false");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Путь к ffmpeg выключен" << endl;
                                 continue;
                             } // enabled
@@ -239,7 +274,14 @@ int main()
                                 cout << "Введите путь к ffmpeg: ";
                                 cin >> path_ffmpeg;
                                 config.put("Custom Path to ffmpeg.path", path_ffmpeg);
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 continue;
                             } // path
 
@@ -280,7 +322,14 @@ int main()
                             if (config.get<string>("thumbnail.enabled", "false") == "false")
                             {
                                 config.put("thumbnail.enabled", "true");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Предпросмотр включен" << endl;
                             }
                             else
@@ -293,7 +342,14 @@ int main()
                             if (config.get<string>("thumbnail.enabled", "false") == "true")
                             {
                                 config.put("thumbnail.enabled", "false");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Предпросмотр выключен" << endl;
                             }
                             else
@@ -330,7 +386,14 @@ int main()
                             if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
                             {
                                 config.put("Custom Path to yt-dlp.enabled", "true");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Путь к yt-dlp включен" << endl;
                                 continue;
                             }
@@ -344,7 +407,14 @@ int main()
                             if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
                             {
                                 config.put("Custom Path to yt-dlp.enabled", "false");
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 cout << "Путь к yt-dlp выключен" << endl;
                                 continue;
                             }
@@ -363,7 +433,14 @@ int main()
                                 cout << "Введите путь к yt-dlp: ";
                                 cin >> path_yt_dlp;
                                 config.put("Custom Path to yt-dlp.path", path_yt_dlp);
-                                pt::write_json(config_file.string(), config);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                                 continue;
                             }
                             else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")

@@ -25,7 +25,6 @@ public: // Public members
 
     void download(const string &url, int &quality, const pt::ptree &config) // Function download
     {
-        string command;
         string path_ffmpeg;
         string yt_dlp_path = bp::search_path("yt-dlp").string();
         vector<string> args; // Vector of arguments
