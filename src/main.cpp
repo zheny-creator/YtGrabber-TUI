@@ -322,7 +322,7 @@ int main()
             cout << "YtGrabber-TUI" << endl;
             cout << "Надстроками для yt-dlp" << endl;
             cout << "Автор: Женя Бородин" << endl;
-            cout << "Верия: 1.0 Alpha 2" << endl;
+            cout << "Версия: 1.0 Beta" << endl;
         }
         if (choice == 5)
         {
