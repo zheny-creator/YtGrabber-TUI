@@ -26,6 +26,8 @@ public: // Public members
     {
         string command;
         string path_ffmpeg;
+        string yt_dlp_path = bp::search_path("yt-dlp").string();
+
         vector<string> args = {
             "-f", "bestvideo[height<=" + to_string(quality) + "]",
             url};
@@ -39,12 +41,17 @@ public: // Public members
         {
             args.insert(args.begin(), "--embed-thumbnail");
         }
+        if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+        {
+            yt_dlp_path = config.get<string>("Custom Path to yt-dlp.path", "yt-dlp");
+        }
+        cout << yt_dlp_path << endl;
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
             cout << a << " ";
         cout << endl;
-        bp::child c(bp::search_path("yt-dlp"), bp::args(args)); // Run yt-dlp
-        c.wait();                                               // Wait for yt-dlp to finish
+        bp::child c(yt_dlp_path, bp::args(args)); // Run yt-dlp
+        c.wait();                                 // Wait for yt-dlp to finish
     }
 };
 class audio

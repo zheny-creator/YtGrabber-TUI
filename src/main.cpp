@@ -3,11 +3,15 @@
 
 int main()
 {
-    string url, setting_set, setting_get, path_ffmpeg;
+    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp;
     pt::ptree config;
     int choice;
     int quality;
-    int choice_menu;
+    int choice_menu_settings;
+    int choice_menu_quality;
+    int choice_menu_ffmpeg;
+    int choice_menu_yt_dlp;
+    int choice_menu_preview;
     string enabled;
     int quality_video;
     fs::path path = bp::search_path("yt-dlp"); // for yt-dlp
@@ -68,13 +72,13 @@ int main()
                 cout << "4. Превью видео" << endl;
                 cout << "5. Выход" << endl;
                 cout << "Выберите действие: ";
-                cin >> choice; // choice
+                cin >> choice_menu_settings; // choice
                 cin.ignore();
-                if (choice == 5)
+                if (choice_menu_settings == 5)
                 {
                     break;
                 } // quality
-                else if (choice == 1)
+                else if (choice_menu_settings == 1)
                 {
                     while (true)
                     {
@@ -83,9 +87,9 @@ int main()
                         cout << "3. Изменить качество видео" << endl;
                         cout << "4. Назад" << endl;
                         cout << "Выберите действие: "; // quality
-                        cin >> choice;                 // choice
+                        cin >> choice_menu_quality;    // choice
                         cin.ignore();
-                        if (choice == 1)
+                        if (choice_menu_quality == 1)
                         {
                             if (config.get<string>("quality.enabled", "false") == "false")
                             {
@@ -100,7 +104,7 @@ int main()
                                 continue;
                             } // if video enabled
                         }
-                        if (choice == 2)
+                        if (choice_menu_quality == 2)
                         {
                             if (config.get<string>("quality.enabled", "false") == "true")
                             {
@@ -115,7 +119,7 @@ int main()
                                 continue;
                             } // if video enabled
                         }
-                        if (choice == 3)
+                        if (choice_menu_quality == 3)
                         {
                             if (config.get<string>("quality.enabled", "false") == "true")
                             {
@@ -135,9 +139,13 @@ int main()
                             }
 
                         } // quality
+                        if (choice_menu_quality == 4)
+                        {
+                            break;
+                        }
                     }
                 }
-                else if (choice == 2)
+                else if (choice_menu_settings == 2)
                 {
                     while (true)
                     {
@@ -146,9 +154,9 @@ int main()
                         cout << "3. Изменить путь" << endl;
                         cout << "4. Назад" << endl;
                         cout << "Выберите действие: "; // ffmpeg
-                        cin >> choice;                 // choice
+                        cin >> choice_menu_ffmpeg;     // choice
                         cin.ignore();
-                        if (choice == 1)
+                        if (choice_menu_ffmpeg == 1)
                         {
                             if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
                             {
@@ -162,7 +170,7 @@ int main()
                                 cout << "Путь к ffmpeg уже включен" << endl;
                             }
                         }
-                        else if (choice == 2)
+                        else if (choice_menu_ffmpeg == 2)
                         {
                             if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
                             {
@@ -176,7 +184,7 @@ int main()
                                 cout << "Путь к ffmpeg уже выключен" << endl;
                             }
                         }
-                        else if (choice == 3)
+                        else if (choice_menu_ffmpeg == 3)
                         {
                             if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
                             {
@@ -196,13 +204,13 @@ int main()
                                 }
                             }
                         }
-                        else if (choice == 4)
+                        else if (choice_menu_ffmpeg == 4)
                         {
                             break;
                         }
                     }
                 }
-                if (choice == 4)
+                if (choice_menu_settings == 4)
                 {
                     while (true)
                     {
@@ -210,9 +218,9 @@ int main()
                         cout << "2. Выключить" << endl;
                         cout << "3. Назад" << endl;
                         cout << "Выберите действие: "; // preview
-                        cin >> choice;                 // choice
+                        cin >> choice_menu_preview;    // choice
                         cin.ignore();
-                        if (choice == 1)
+                        if (choice_menu_preview == 1)
                         {
                             if (config.get<string>("thumbnail.enabled", "false") == "false")
                             {
@@ -225,7 +233,7 @@ int main()
                                 cout << "Предпросмотр уже включен" << endl;
                             }
                         }
-                        if (choice == 2)
+                        if (choice_menu_preview == 2)
                         {
                             if (config.get<string>("thumbnail.enabled", "false") == "true")
                             {
@@ -238,10 +246,72 @@ int main()
                                 cout << "Предпросмотр уже выключен" << endl;
                             }
                         }
-                        if (choice == 3)
+                        if (choice_menu_preview == 3)
                         {
                             break;
                             ;
+                        }
+                    }
+                }
+                if (choice_menu_settings == 3)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Изменить путь" << endl;
+                        cout << "4. Назад" << endl;
+                        cout << "Выберите действие: ";
+                        cin >> choice_menu_yt_dlp;
+                        if (choice_menu_yt_dlp == 1)
+                        {
+                            if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                            {
+                                config.put("Custom Path to yt-dlp.enabled", "true");
+                                pt::write_json(config_dir.string(), config);
+                                cout << "Путь к yt-dlp включен" << endl;
+                                continue;
+                            }
+                            else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+                            {
+                                cout << "Путь к yt-dlp уже включен" << endl;
+                            }
+                        }
+                        if (choice_menu_yt_dlp == 2)
+                        {
+                            if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+                            {
+                                config.put("Custom Path to yt-dlp.enabled", "false");
+                                pt::write_json(config_dir.string(), config);
+                                cout << "Путь к yt-dlp выключен" << endl;
+                                continue;
+                            }
+                            else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                            {
+                                if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                                {
+                                    cout << "Путь к yt-dlp уже выключен" << endl;
+                                }
+                            }
+                        }
+                        if (choice_menu_yt_dlp == 3)
+                        {
+                            if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+                            {
+                                cout << "Введите путь к yt-dlp: ";
+                                cin >> path_yt_dlp;
+                                config.put("Custom Path to yt-dlp.path", path_yt_dlp);
+                                pt::write_json(config_dir.string(), config);
+                                continue;
+                            }
+                            else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                            {
+                                cout << "Путь к yt-dlp выключен" << endl;
+                            }
+                        }
+                        if (choice_menu_yt_dlp == 4)
+                        {
+                            break;
                         }
                     }
                 }
