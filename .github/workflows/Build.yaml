@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -20,8 +20,10 @@ jobs:
             libspdlog-dev
 
       - name: Build
-        run: |
-          make
+        run: make
+
+      - name: Make executable
+        run: chmod +x ./yt-grabber-tui || true
 
       - name: Run
         run: ./yt-grabber-tui
