@@ -36,7 +36,7 @@ public: // Public members
         }
         catch (const bad_alloc &e)
         {
-            cout << e.what() << "Ошибка выделения памяти" << endl;
+            cerr << e.what() << "Ошибка выделения памяти" << endl;
         }
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {
