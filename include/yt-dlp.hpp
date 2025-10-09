@@ -64,7 +64,7 @@ public: // Public members
         }
         catch (const bp::process_error &e)
         {
-            cout << e.what() << "Ошибка запуска процесса!" << endl; // Handle process error
+            cerr << e.what() << "Ошибка запуска процесса!" << endl; // Handle process error
         }
     }
 };
