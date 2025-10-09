@@ -36,7 +36,8 @@ nlohmann/json (json.hpp)
 
 **Библиотеки C++:**
 - Boost (filesystem, system, thread, process, property_tree для JSON)
-
+- fmt
+- spdlog
 **Внешние утилиты:**
 - FFmpeg (для работы с yt-dlp)
 
