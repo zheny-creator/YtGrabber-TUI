@@ -1,21 +1,30 @@
 name: Test and build
 
 on: push
+
 jobs:
   build:
-  runs-on: ubuntu-20.04
-  steps:
-  - name: Checkout
-    uses: actions/checkout@v5.0.0
-  - name: install dependencies
-    run: |
-      sudo apt update
-      sudo apt install -y build-essential cmake \
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake \
             libboost-all-dev \
             nlohmann-json3-dev \
             libfmt-dev \
             libspdlog-dev
-  - name: build
-    run: |
-      make
-      ./yt-grabber-tui
+
+      - name: Build
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make -j$(nproc)
+
+      - name: Run
+        run: ./build/yt-grabber-tui
