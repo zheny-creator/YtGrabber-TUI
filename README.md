@@ -41,10 +41,7 @@ nlohmann/json (json.hpp)
 
 **Внешние утилиты:**
 - FFmpeg (для работы с yt-dlp)
-
-**Прочее:**
-- Доступ в интернет для yt-dlp
-
+- yt-dlp
 
 # Сборка
 ```Shell
