@@ -22,9 +22,3 @@ jobs:
 
       - name: Build
         run: make
-
-      - name: Make executable
-        run: chmod +x ./yt-grabber-tui || true
-
-      - name: Run
-        run: ./yt-grabber-tui
