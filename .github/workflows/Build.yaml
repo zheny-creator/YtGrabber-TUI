@@ -1,0 +1,21 @@
+name: Test and build
+
+on: push
+jobs:
+  build:
+  run-on: ubuntu-20.04
+  steps:
+    name: Checkout
+    uses: actions/checkout@v5.0.0
+    name: install dependencies
+    run:
+      sudo apt update
+      sudo apt install -y build-essential cmake \
+            libboost-all-dev \
+            nlohmann-json3-dev \
+            libfmt-dev \
+            libspdlog-dev
+    name: build
+    run:
+      make
+      ./yt-grabber-tui
