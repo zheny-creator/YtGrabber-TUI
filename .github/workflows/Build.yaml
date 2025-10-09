@@ -21,10 +21,7 @@ jobs:
 
       - name: Build
         run: |
-          mkdir -p build
-          cd build
-          cmake ..
-          make -j$(nproc)
+          make
 
       - name: Run
-        run: ./build/yt-grabber-tui
+        run: ./yt-grabber-tui
