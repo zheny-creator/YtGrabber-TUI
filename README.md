@@ -7,30 +7,7 @@
 
 ## Системные требования
 
-### Windows
-
-ОС: Windows 8 x64 или выше
-
-Компилятор C++: g++
-
-Стандарт языка: C++11
-
-Библиотеки C++ для сборки проекта:
-
-Boost (filesystem, system, thread, process)
-
-fmt
-
-spdlog (для логирования)
-
-nlohmann/json (json.hpp)
-
-Внешние утилиты: yt-dlp (актуальная версия)
-
-### Linux
-
 **ОС:** 64-битный дистрибутив Linux с glibc ≥ 2.31  
-*(например: Ubuntu 20.04+, Debian 11+, Fedora 32+)*
 
 **Компилятор C++:** g++ с поддержкой C++11  
 
@@ -58,25 +35,20 @@ Unlike the planned GUI version, **Yt-Grabber-TUI** provides a text-based user in
 
 ## System Requirements
 
-OS: Windows 8 x64 or higher
+**OS:** 64-bit Linux distribution with glibc ≥ 2.31
 
-C++ Compiler: g++
+**C++ Compiler:** g++ with C++11 support
 
-Language Standard: C++11
+**C++ Libraries:**
 
-C++ Libraries for build project:
+* Boost (filesystem, system, thread, process, property_tree for JSON)
+* fmt
+* spdlog
 
-Boost (filesystem, system, thread, process)
+**External Utilities:**
 
-fmt
-
-spdlog (for logging)
-
-nlohmann/json (json.hpp)
-
-External Tools: yt-dlp (latest version)
-
-
+* FFmpeg (for yt-dlp functionality)
+* yt-dlp
 
 # Build
 
