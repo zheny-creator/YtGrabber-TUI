@@ -25,6 +25,42 @@
 make
 ```
 
+## Установка зависимостей
+ **Debian / Ubuntu**
+
+🔹 Для запуска:
+```shell
+sudo apt install -y libboost-filesystem libboost-system libboost-thread libboost-program-options libfmt10 libspdlog1 ffmpeg yt-dlp
+```
+🔹 Для сборки:
+```shell
+sudo apt install -y g++ cmake libboost-dev libfmt-dev libspdlog-dev
+```
+
+ **Fedora**
+
+🔹 Для запуска:
+```shell
+sudo dnf install -y boost boost-filesystem boost-system boost-thread boost-program-options fmt spdlog ffmpeg yt-dlp
+```
+
+🔹 Для сборки:
+```shell
+sudo dnf install -y gcc-c++ cmake boost-devel fmt-devel spdlog-devel
+```
+
+  **Arch Linux**
+
+🔹 Для запуска:
+```shell
+sudo pacman -S --needed boost fmt spdlog ffmpeg yt-dlp
+```
+
+🔹 Для сборки:
+```shell
+sudo pacman -S --needed base-devel cmake boost fmt spdlog
+```
+
 ---
 
 ## 🇬🇧 Description (English)  
@@ -54,4 +90,41 @@ Unlike the planned GUI version, **Yt-Grabber-TUI** provides a text-based user in
 
 ```Shell
 make
+```
+
+  ## Dependency Installation
+ **Debian / Ubuntu**
+
+🔹 For runtime:
+```shell
+sudo apt install -y libboost-filesystem libboost-system libboost-thread libboost-program-options libfmt10 libspdlog1 ffmpeg yt-dlp
+```
+
+🔹 For building:
+```shell
+sudo apt install -y g++ cmake libboost-dev libfmt-dev libspdlog-dev
+```
+
+ **Fedora**
+
+🔹 For runtime:
+```shell
+sudo dnf install -y boost boost-filesystem boost-system boost-thread boost-program-options fmt spdlog ffmpeg yt-dlp
+```
+
+🔹 For building:
+```shell
+sudo dnf install -y gcc-c++ cmake boost-devel fmt-devel spdlog-devel
+```
+
+ **Arch Linux**
+
+🔹 For runtime:
+```shell
+sudo pacman -S --needed boost fmt spdlog ffmpeg yt-dlp
+```
+
+🔹 For building:
+```shell
+sudo pacman -S --needed base-devel cmake boost fmt spdlog
 ```
