@@ -28,11 +28,11 @@ make
 
 🔹 Для запуска:
 ```shell
-sudo apt install -y libboost-filesystem libboost-system libboost-thread libboost-program-options libfmt10 libspdlog1 ffmpeg yt-dlp
+sudo apt install -y libboost-filesystem1.83.0 libboost-system1.83.0 libboost-thread1.83.0 libboost-program-options1.83.0 libfmt9 libspdlog1.12 ffmpeg yt-dlp
 ```
 🔹 Для сборки:
 ```shell
-sudo apt install -y g++ cmake libboost-dev libfmt-dev libspdlog-dev
+sudo apt install -y g++ make libboost-dev libfmt-dev libspdlog-dev
 ```
 
  **Fedora**
@@ -44,7 +44,7 @@ sudo dnf install -y boost boost-filesystem boost-system boost-thread boost-progr
 
 🔹 Для сборки:
 ```shell
-sudo dnf install -y gcc-c++ cmake boost-devel fmt-devel spdlog-devel
+sudo dnf install -y gcc-c++ make boost-devel fmt-devel spdlog-devel
 ```
 
   **Arch Linux**
@@ -56,6 +56,6 @@ sudo pacman -S --needed boost fmt spdlog ffmpeg yt-dlp
 
 🔹 Для сборки:
 ```shell
-sudo pacman -S --needed base-devel cmake boost fmt spdlog
+sudo pacman -S --needed base-devel make boost fmt spdlog
 ```
 
