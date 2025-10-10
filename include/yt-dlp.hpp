@@ -29,7 +29,7 @@ public: // Public members
         vector<string> args; // Vector of arguments
         try
         {
-            vector<string> args = {
+            args = {
                 "-f", "bestvideo[height<=" + to_string(quality) + "]",
                 url};
         }
@@ -51,7 +51,6 @@ public: // Public members
         {
             yt_dlp_path = config.get<string>("Custom Path to yt-dlp.path", "yt-dlp");
         }
-        cout << yt_dlp_path << endl;
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
             cout << a << " ";
