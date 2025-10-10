@@ -2,7 +2,6 @@
 #include <string>                              // for string
 #include "Log.hpp"                             // for log
 #include <boost/process.hpp>                   // for child
-#include <boost/process/child.hpp>             // for child
 #include <boost/filesystem.hpp>                // for filesystem
 #include <boost/property_tree/ptree.hpp>       // for ptree
 #include <boost/property_tree/json_parser.hpp> // for json_parser
