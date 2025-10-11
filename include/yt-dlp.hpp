@@ -48,7 +48,14 @@ public: // Public members
         }
         if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
         {
-            yt_dlp_path = config.get<string>("Custom Path to yt-dlp.path", "yt-dlp");
+            if (!fs::exists(config.get<string>("Custom Path to yt-dlp.path", "yt-dlp")))
+            {
+                cerr << "Путь к yt-dlp указан неверно!" << endl;
+            }
+            else if (fs::exists(config.get<string>("Custom Path to yt-dlp.path", "yt-dlp")))
+            {
+                yt_dlp_path = config.get<string>("Custom Path to yt-dlp.path", "yt-dlp");
+            }
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
