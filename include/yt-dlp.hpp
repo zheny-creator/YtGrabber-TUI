@@ -39,8 +39,21 @@ public: // Public members
         }
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {
-            path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg");
-            args.insert(args.begin(), "--ffmpeg-location=\"" + path_ffmpeg + "\"");
+            if (!fs::exists(config.get<string>("Custom Path to ffmpeg.path", "ffmpeg")))
+            {
+                cerr << "Путь к ffmpeg указан неверно!" << endl;
+                return;
+            }
+            else if (fs::is_directory(config.get<string>("Custom Path to ffmpeg.path", "ffmpeg")))
+            {
+                cerr << "Это путь к папке!" << endl;
+            }
+
+            else if (fs::exists(config.get<string>("Custom Path to ffmpeg.path", "ffmpeg")))
+            {
+                path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg");
+                args.insert(args.begin(), "--ffmpeg-location=\"" + path_ffmpeg + "\"");
+            }
         }
         if (config.get<string>("thumbnail.enabled", "false") == "true")
         {
@@ -51,6 +64,12 @@ public: // Public members
             if (!fs::exists(config.get<string>("Custom Path to yt-dlp.path", "yt-dlp")))
             {
                 cerr << "Путь к yt-dlp указан неверно!" << endl;
+                return;
+            }
+            else if (fs::is_directory(config.get<string>("Custom Path to yt-dlp.path", "yt-dlp")))
+            {
+                cerr << "Это путь к папке!" << endl;
+                return;
             }
             else if (fs::exists(config.get<string>("Custom Path to yt-dlp.path", "yt-dlp")))
             {
