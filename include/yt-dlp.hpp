@@ -40,8 +40,7 @@ public: // Public members
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {
             path_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "ffmpeg");
-            args.insert(args.begin(), "\"" + path_ffmpeg + "\"");
-            args.insert(args.begin(), "--ffmpeg-location=");
+            args.insert(args.begin(), "--ffmpeg-location=\"" + path_ffmpeg + "\"");
         }
         if (config.get<string>("thumbnail.enabled", "false") == "true")
         {
