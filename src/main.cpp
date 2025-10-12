@@ -34,14 +34,14 @@ int main()
     config_file = config_dir / "config.json";
 
 #elif defined(_WIN32)
-    const wchar_t *home = _wgetenv(L"LOCALAPPDATA");
+    const char *home = std::getenv("LOCALAPPDATA");
     if (!home)
     {
         std::cerr << "Профиль пользователя не был найден!" << std::endl;
         return 1;
     }
-    config_dir = fs::path(home) / L"yt-grabber-tui";
-    config_file = config_dir / L"config.json";
+    config_dir = fs::path(home) / "yt-grabber-tui";
+    config_file = config_dir / "config.json";
 #endif
     settings_to_json json(config);
     json.load_json_settings(config);
@@ -138,7 +138,7 @@ int main()
                                 config.put("quality.enabled", "true");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -160,7 +160,7 @@ int main()
                                 config.put("quality.enabled", "false");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -184,7 +184,7 @@ int main()
                                 config.put("quality.quality", quality_video);
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -233,7 +233,7 @@ int main()
                                 config.put("Custom Path to ffmpeg.enabled", "true");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -254,7 +254,7 @@ int main()
                                 config.put("Custom Path to ffmpeg.enabled", "false");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -277,7 +277,7 @@ int main()
                                 config.put("Custom Path to ffmpeg.path", path_ffmpeg);
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -325,7 +325,7 @@ int main()
                                 config.put("thumbnail.enabled", "true");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -345,7 +345,7 @@ int main()
                                 config.put("thumbnail.enabled", "false");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -389,7 +389,7 @@ int main()
                                 config.put("Custom Path to yt-dlp.enabled", "true");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -410,7 +410,7 @@ int main()
                                 config.put("Custom Path to yt-dlp.enabled", "false");
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
@@ -436,7 +436,7 @@ int main()
                                 config.put("Custom Path to yt-dlp.path", path_yt_dlp);
                                 try
                                 {
-                                    json.write_json_crossplatform(config_file, config);
+                                    pt::write_json(config_file.string(), config);
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
