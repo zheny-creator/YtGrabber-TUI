@@ -38,7 +38,7 @@ public:
         }
         config_file = config_dir / "config.json";
 #elif defined(_WIN32)
-        const wchar_t *home = _wgetenv(L"LOCALAPPDATA");
+        const wchar_t *home = _wgetenv("LOCALAPPDATA");
         config_dir = fs::path(home) / "yt-grabber-tui";
         try
         {
@@ -74,7 +74,7 @@ public:
 #if defined(_WIN32)
         try
         {
-            std::wofstream file(config_file.wstring().c_str());
+            std::wofstream file(config_file.wstring());
             pt::write_json(file, config);
             file.close();
         }
@@ -120,7 +120,7 @@ public:
 #if defined(_WIN32)
             try
             {
-                std::wifstream file(config_file.wstring().c_str());
+                std::wifstream file(config_file.wstring());
                 pt::read_json(file, config);
                 file.close();
             }
@@ -147,7 +147,7 @@ public:
     void write_json_crossplatform(const fs::path &file_path, const pt::ptree &tree)
     {
 #if defined(_WIN32)
-        std::wofstream file(config_file.wstring().c_str());
+        std::wofstream file(file_path.wstring());
         if (!file)
         {
             std::cerr << "Не удалось открыть файл для записи: " << file_path << std::endl;
