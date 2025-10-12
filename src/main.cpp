@@ -34,7 +34,7 @@ int main()
     config_file = config_dir / "config.json";
 
 #elif defined(_WIN32)
-    const wchar_t *home = _wgetenv(L"LOCALAPPDATA");
+    const char *home = std::getenv(L"LOCALAPPDATA");
     if (!home)
     {
         std::cerr << "Профиль пользователя не был найден!" << std::endl;
