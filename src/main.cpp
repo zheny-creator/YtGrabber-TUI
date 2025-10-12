@@ -3,6 +3,7 @@
 
 int main()
 {
+    setlocale(LC_ALL, "ru_RU.UTF-8");
     string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp;
     pt::ptree config;
     int choice;
