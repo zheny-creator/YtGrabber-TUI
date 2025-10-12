@@ -38,7 +38,7 @@ public:
         }
         config_file = config_dir / "config.json";
 #elif defined(_WIN32)
-        const char *home = std::getenv(L"LOCALAPPDATA");
+        const wchar_t *home = _wgetenv(L"LOCALAPPDATA");
         config_dir = fs::path(home) / "yt-grabber-tui";
         try
         {
@@ -74,7 +74,7 @@ public:
 #if defined(_WIN32)
         try
         {
-            std::ofstream file(config_file.string()); // char-поток
+            std::wofstream file(config_file.wstring().c_str());
             pt::write_json(file, config);
             file.close();
         }
@@ -97,63 +97,73 @@ public:
     void load_json_settings(pt::ptree &config)
     {
         fs::path config_file;
-
-#if defined(_WIN32)
-        const char *home = std::getenv("LOCALAPPDATA");
+#if defined(__linux__)
+        const char *home = getenv("HOME");
+        config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
+#elif defined(_WIN32)
+        const wchar_t *home = _wgetenv(L"LOCALAPPDATA");
         if (!home)
         {
             std::cerr << "Не удалось получить LOCALAPPDATA" << std::endl;
             return;
         }
-        config_file = fs::path(home) / "yt-grabber-tui" / "config.json";
-#else
-        const char *home = std::getenv("HOME");
-        if (!home)
-        {
-            std::cerr << "Не удалось получить HOME" << std::endl;
-            return;
-        }
-        config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
+        config_file = fs::path(home) / L"yt-grabber-tui" / L"config.json";
 #endif
-
-        // Если файла нет — создаём
         if (!fs::exists(config_file))
         {
             create_json_settings(config);
         }
 
-        // Чтение
-        try
+        if (fs::exists(config_file))
         {
-            std::ifstream file(config_file.string()); // char поток для Boost
-            pt::read_json(file, config);
+            std::cout << "Загрузка настроек..." << std::endl;
+#if defined(_WIN32)
+            try
+            {
+                std::wifstream file(config_file.wstring().c_str());
+                pt::read_json(file, config);
+                file.close();
+            }
+            catch (const pt::json_parser::json_parser_error &e)
+            {
+                std::cerr << "Ошибка чтения файла настроек: " << e.what() << std::endl;
+            }
+#else
+            try
+            {
+                pt::read_json(config_file.string(), config);
+            }
+            catch (const pt::json_parser::json_parser_error &e)
+            {
+                std::cerr << "Ошибка чтения файла настроек: " << e.what() << std::endl;
+            }
+#endif
         }
-        catch (const pt::json_parser::json_parser_error &e)
+        else
         {
-            std::cerr << "Ошибка чтения файла настроек: " << e.what() << std::endl;
+            create_json_settings(config);
         }
     }
-
     void write_json_crossplatform(const fs::path &file_path, const pt::ptree &tree)
     {
+#if defined(_WIN32)
+        std::wofstream file(config_file.wstring().c_str());
+        if (!file)
+        {
+            std::cerr << "Не удалось открыть файл для записи: " << file_path << std::endl;
+            return;
+        }
+        pt::write_json(file, tree);
+        file.close();
+#else
         try
         {
-#if defined(_WIN32)
-            std::ofstream file(file_path.string()); // UTF-8 путь
-#else
-            std::ofstream file(file_path);
-#endif
-            if (!file)
-            {
-                std::cerr << "Не удалось открыть файл для записи: " << file_path << std::endl;
-                return;
-            }
-            pt::write_json(file, tree);
-            file.close();
+            pt::write_json(file_path.string(), tree);
         }
         catch (const pt::json_parser::json_parser_error &e)
         {
             std::cerr << "Ошибка записи файла: " << e.what() << std::endl;
         }
+#endif
     }
 };
