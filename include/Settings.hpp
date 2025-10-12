@@ -38,17 +38,7 @@ public:
         }
         config_file = config_dir / "config.json";
 #elif defined(_WIN32)
-        const char *home = std::getenv("USERPROFILE");
-        config_dir = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui";
-        try
-        {
-            fs::create_directories(config_dir);
-        }
-        catch (const fs::filesystem_error &e)
-        {
-            cerr << e.what() << "Ошибка создания директории" << std::endl;
-        }
-        config_file = config_dir / "config.json";
+        cout << "Windows" << endl;
 #endif
         pt::ptree quality_video;
         quality_video.put("enabled", false);
@@ -71,7 +61,7 @@ public:
         custom_path_yt_dlp.put("enabled", false);
         custom_path_yt_dlp.put("path", "You path to yt-dlp");
         config.add_child("Custom Path to yt-dlp", custom_path_yt_dlp);
-
+#if defined(__linux__)
         try
         {
             pt::write_json(config_file.string(), config);
@@ -80,6 +70,16 @@ public:
         {
             cerr << "Ошибка записи файла настроек: " << e.what() << endl;
         }
+#elif defined(_WIN32)
+        try
+        {
+            pt::write_json("config.json", config);
+        }
+        catch (const pt::json_parser::json_parser_error &e)
+        {
+            cerr << "Ошибка записи файла настроек: " << e.what() << endl;
+        }
+#endif
     }
 
     void load_json_settings(pt::ptree &config)
@@ -89,8 +89,7 @@ public:
         const char *home = getenv("HOME");
         config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
 #elif defined(_WIN32)
-        const char *home = std::getenv("USERPROFILE");
-        config_file = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui" / "config.json";
+        cout << "Windows" << endl;
 #endif
         if (!fs::exists(config_file))
         {
@@ -99,6 +98,7 @@ public:
         if (fs::exists(config_file))
         {
             cout << "Загрузка настроек..." << endl;
+#if defined(__linux__)
             try
             {
                 pt::read_json(config_file.string(), config);
@@ -107,6 +107,16 @@ public:
             {
                 cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
             }
+#elif defined(_WIN32)
+            try
+            {
+                pt::read_json("config.json", config);
+            }
+            catch (const pt::json_parser::json_parser_error &e)
+            {
+                cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
+            }
+#endif
         }
         else
         {
