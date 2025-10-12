@@ -34,13 +34,13 @@ int main()
     config_file = config_dir / "config.json";
 
 #elif defined(_WIN32)
-    const char *home = std::getenv("LOCALAPPDATA");
+    const char *home = std::getenv("USERPROFILE");
     if (!home)
     {
         std::cerr << "Профиль пользователя не был найден!" << std::endl;
         return 1;
     }
-    config_dir = fs::path(home) / "yt-grabber-tui";
+    config_dir = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui";
     config_file = config_dir / "config.json";
 #endif
     settings_to_json json(config);

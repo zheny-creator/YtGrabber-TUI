@@ -38,8 +38,8 @@ public:
         }
         config_file = config_dir / "config.json";
 #elif defined(_WIN32)
-        const char *home = std::getenv("LOCALAPPDATA");
-        config_dir = fs::path(home) / "yt-grabber-tui";
+        const char *home = std::getenv("USERPROFILE");
+        config_dir = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui";
         try
         {
             fs::create_directories(config_dir);
@@ -89,8 +89,8 @@ public:
         const char *home = getenv("HOME");
         config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
 #elif defined(_WIN32)
-        const char *home = std::getenv("LOCALAPPDATA");
-        config_file = fs::path(home) / "yt-grabber-tui" / "config.json";
+        const char *home = std::getenv("USERPROFILE");
+        config_file = fs::path(home) / "AppData" / "Local" / "yt-grabber-tui" / "config.json";
 #endif
         if (!fs::exists(config_file))
         {
