@@ -38,7 +38,6 @@ public:
         }
         config_file = config_dir / "config.json";
 #elif defined(_WIN32)
-        cout << "Windows" << endl;
 #endif
         pt::ptree quality_video;
         quality_video.put("enabled", false);
@@ -88,9 +87,8 @@ public:
 #if defined(__linux__)
         const char *home = getenv("HOME");
         config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
-#elif defined(_WIN32)
-        cout << "Windows" << endl;
 #endif
+#if defined(__linux__)
         if (!fs::exists(config_file))
         {
             create_json_settings(config);
@@ -98,6 +96,16 @@ public:
         if (fs::exists(config_file))
         {
             cout << "Загрузка настроек..." << endl;
+#elif defined(_WIN32)
+        if (!fs::exists("config.json"))
+        {
+            create_json_settings(config);
+        }
+        else if (fs::exists("config.json"))
+        {
+            cout << "Загрузка настроек..." << endl;
+        }
+#endif
 #if defined(__linux__)
             try
             {
@@ -108,14 +116,14 @@ public:
                 cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
             }
 #elif defined(_WIN32)
-            try
-            {
-                pt::read_json("config.json", config);
-            }
-            catch (const pt::json_parser::json_parser_error &e)
-            {
-                cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
-            }
+        try
+        {
+            pt::read_json("config.json", config);
+        }
+        catch (const pt::json_parser::json_parser_error &e)
+        {
+            cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
+        }
 #endif
         }
         else
