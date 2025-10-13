@@ -1,5 +1,5 @@
 #include "yt-dlp.hpp" // for yt-dlp
-#define DEBUG         // for debug
+#define DEBUG FALSE   // for debug
 
 int main()
 {

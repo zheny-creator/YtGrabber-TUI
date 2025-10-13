@@ -93,28 +93,30 @@ public:
         {
             create_json_settings(config);
         }
-        if (fs::exists(config_file))
+        else
         {
             cout << "Загрузка настроек..." << endl;
+        }
 #elif defined(_WIN32)
         if (!fs::exists("config.json"))
         {
             create_json_settings(config);
         }
-        else if (fs::exists("config.json"))
+        else
         {
             cout << "Загрузка настроек..." << endl;
         }
 #endif
+
 #if defined(__linux__)
-            try
-            {
-                pt::read_json(config_file.string(), config);
-            }
-            catch (const pt::json_parser::json_parser_error &e)
-            {
-                cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
-            }
+        try
+        {
+            pt::read_json(config_file.string(), config);
+        }
+        catch (const pt::json_parser::json_parser_error &e)
+        {
+            cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
+        }
 #elif defined(_WIN32)
         try
         {
@@ -125,10 +127,5 @@ public:
             cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
         }
 #endif
-        }
-        else
-        {
-            create_json_settings(config);
-        }
     }
 };
