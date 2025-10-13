@@ -15,12 +15,17 @@ int main()
     int choice_menu_preview;
     string enabled;
     int quality_video;
-    fs::path path = bp::search_path("yt-dlp"); // for yt-dlp
-    if (!fs::exists(path))                     // examination of the existence of yt-dlp
+    fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
+    fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
+    if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
     {
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
     }
+    if (!fs::exists(path_to_ffmpeg))
+    {
+        cout << "ffmpeg не найден" << endl; // if ffmpeg not found
+    } // examination of the existence of ffmpeg
     fs::path config_dir;
     fs::path config_file;
 #if defined(__linux__)
