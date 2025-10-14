@@ -12,6 +12,7 @@ Security updates are provided as part of active development, but the software ma
 | Version | Supported          |
 | -------- | ------------------ |
 | RC     | :white_check_mark: |
+| Beta   | :x:                |
 | Alpha | :x:                |
 
 Only the current beta branch receives fixes and improvements.
