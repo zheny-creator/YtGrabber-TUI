@@ -1,5 +1,5 @@
 #include "yt-dlp.hpp" // for yt-dlp
-#define DEBUG FALSE   // for debug
+#define DEBUG false   // for debug
 
 int main()
 {
@@ -66,6 +66,11 @@ int main()
         {
             cout << "Введите ссылку на видео: ";
             getline(cin, url); // url
+            if (url.empty())
+            {
+                cout << "Ссылка не введена" << endl;
+                continue;
+            }
             auto q = config.get_child("quality");
             string enabled = q.get<string>("enabled", "false");
             int quality_video = q.get<int>("quality", 1080);
@@ -77,6 +82,13 @@ int main()
             {
                 cout << "Введите качество видео: ";
                 cin >> quality; // quality
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Ошибка ввода! Введите число.\n";
+                    continue;
+                }
             }
             video video1(url, quality, setting_set, config); // for video
             video1.download(url, quality, config);           // download
@@ -84,7 +96,12 @@ int main()
         if (choice == 2)
         {
             cout << "Введите ссылку на видео: ";
-            getline(cin, url);   // url
+            getline(cin, url); // url
+            if (url.empty())
+            {
+                cout << "Ссылка не введена" << endl;
+                continue;
+            }
             audio audio(url);    // for audio
             audio.download(url); // download
         }

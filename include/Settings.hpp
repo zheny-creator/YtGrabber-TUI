@@ -6,7 +6,7 @@
 #include <boost/property_tree/ptree.hpp>       // for ptree
 #include <boost/property_tree/json_parser.hpp> // for json_parser
 #include <cstdlib>
-
+#define DEBUG false                  // for debug
 using namespace std;                 // for string
 namespace fs = boost::filesystem;    // for filesystem
 namespace bp = boost::process;       // for child
@@ -95,7 +95,9 @@ public:
         }
         else
         {
+#if (DEBUG)
             cout << "Загрузка настроек..." << endl;
+#endif
         }
 #elif defined(_WIN32)
         if (!fs::exists("config.json"))
@@ -104,7 +106,9 @@ public:
         }
         else
         {
+#if (DEBUG == true)
             cout << "Загрузка настроек..." << endl;
+#endif
         }
 #endif
 
