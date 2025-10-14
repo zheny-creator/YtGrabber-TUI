@@ -2,7 +2,7 @@
 
 ## Project Status
 
-**YtGrabber-TUI** is currently in **beta**.  
+**YtGrabber-TUI** is currently in **RC**.  
 Security updates are provided as part of active development, but the software may still contain experimental or unstable components.
 
 ---
@@ -11,7 +11,7 @@ Security updates are provided as part of active development, but the software ma
 
 | Version | Supported          |
 | -------- | ------------------ |
-| Beta     | :white_check_mark: |
+| RC     | :white_check_mark: |
 | Alpha | :x:                |
 
 Only the current beta branch receives fixes and improvements.
