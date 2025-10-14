@@ -22,7 +22,9 @@ public:
 
     void create_json_settings(pt::ptree &config)
     {
+#if (DEBUG)
         cout << "Создание файла настроек..." << endl;
+#endif
         fs::path config_dir;
         fs::path config_file;
 #if defined(__linux__)
@@ -106,7 +108,7 @@ public:
         }
         else
         {
-#if (DEBUG == true)
+#if (DEBUG)
             cout << "Загрузка настроек..." << endl;
 #endif
         }

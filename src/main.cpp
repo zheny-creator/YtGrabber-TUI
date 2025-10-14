@@ -25,6 +25,7 @@ int main()
     if (!fs::exists(path_to_ffmpeg))
     {
         cout << "ffmpeg не найден" << endl; // if ffmpeg not found
+        return 1;
     } // examination of the existence of ffmpeg
     fs::path config_dir;
     fs::path config_file;
