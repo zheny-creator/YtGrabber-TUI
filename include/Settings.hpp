@@ -62,6 +62,19 @@ public:
         custom_path_yt_dlp.put("enabled", false);
         custom_path_yt_dlp.put("path", "You path to yt-dlp");
         config.add_child("Custom Path to yt-dlp", custom_path_yt_dlp);
+
+        pt::ptree format_video;
+
+        format_video.put("enabled", false);
+        format_video.put("format", "mp4");
+        config.add_child("format video", format_video);
+
+        pt::ptree format_audio;
+
+        format_audio.put("enabled", false);
+        format_audio.put("format", "mp3");
+        config.add_child("format audio", format_audio);
+
 #if defined(__linux__)
         try
         {

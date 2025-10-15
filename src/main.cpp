@@ -4,20 +4,21 @@
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
-    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp;
-    pt::ptree config;
-    int choice;
-    int quality;
-    int choice_menu_settings;
-    int choice_menu_quality;
-    int choice_menu_ffmpeg;
-    int choice_menu_yt_dlp;
-    int choice_menu_preview;
-    string enabled;
-    int quality_video;
-    fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
-    fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
-    if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
+    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio; // strings for url, settings, path
+    pt::ptree config;                                                             // for json
+    int choice;                                                                   // for choice
+    int quality;                                                                  // for quality
+    int choice_menu_settings;                                                     // for choice_menu_settings
+    int choice_menu_quality;                                                      // for choice_menu_quality
+    int choice_menu_ffmpeg;                                                       // for choice_menu_ffmpeg
+    int choice_menu_yt_dlp;                                                       // for choice_menu_yt_dlp
+    int choice_menu_preview;                                                      // for choice_menu_preview
+    int choice_menu_format_audio;                                                 // for choice _menu_format_audio
+    string enabled;                                                               // for enabled
+    int quality_video;                                                            // for quality_video
+    fs::path path_to_ytdlp = bp::search_path("yt-dlp");                           // for yt-dlp
+    fs::path path_to_ffmpeg = bp::search_path("ffmpeg");                          // for ffmpeg
+    if (!fs::exists(path_to_ytdlp))                                               // examination of the existence of yt-dlp
     {
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
@@ -27,20 +28,20 @@ int main()
         cout << "ffmpeg не найден" << endl; // if ffmpeg not found
         return 1;
     } // examination of the existence of ffmpeg
-    fs::path config_dir;
-    fs::path config_file;
-#if defined(__linux__)
-    const char *home = std::getenv("HOME");
-    if (!home)
+    fs::path config_dir;                    // for config_dir
+    fs::path config_file;                   // for config_file
+#if defined(__linux__)                      // if linux
+    const char *home = std::getenv("HOME"); // for home
+    if (!home)                              // if home not found
     {
-        std::cerr << "Профиль пользователя не был найден!" << std::endl;
-        return 1;
+        std::cerr << "Профиль пользователя не был найден!" << std::endl; // if home not found
+        return 1;                                                        // exit
     }
-    config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
-    config_file = config_dir / "config.json";
+    config_dir = fs::path(home) / ".config" / "yt-grabber-tui"; // config_dir
+    config_file = config_dir / "config.json";                   // config_file
 
-#elif defined(_WIN32)
-    config_file = "config.json";
+#elif defined(_WIN32) // if windows
+    config_file = "config.json"; // config_file
 #endif
     settings_to_json json(config);
     json.load_json_settings(config);
@@ -114,7 +115,10 @@ int main()
                 cout << "2. Расположение ffmpeg" << endl;
                 cout << "3. Расположение yt-dlp" << endl;
                 cout << "4. Превью видео" << endl;
-                cout << "5. Выход" << endl;
+                cout << "5. Качество аудио" << endl;
+                cout << "6. формат видео" << endl;
+                cout << "7. формат аудио" << endl;
+                cout << "8. Выход" << endl;
                 cout << "Выберите действие: ";
                 cin >> choice_menu_settings; // choice
                 if (cin.fail())
@@ -125,7 +129,7 @@ int main()
                     continue;
                 }
                 cin.ignore();
-                if (choice_menu_settings == 5)
+                if (choice_menu_settings == 8)
                 {
                     break;
                 } // quality
@@ -471,18 +475,87 @@ int main()
                         }
                     }
                 }
+                else if (choice_menu_settings == 5)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Изменить путь" << endl;
+                        cout << "4. Назад" << endl;
+                        if (choice_menu_format_audio == 1)
+                        {
+                            if (config.get<string>("format audio.enabled", "false") == "false")
+                            {
+                                try
+                                {
+                                    config.put("format audio.enabled", "true");
+                                    cout << "Формат аудио включен" << endl;
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                            if (config.get<string>("format audio.enabled", "false") == "true")
+                            {
+                                cout << "Формат аудио уже включен" << endl;
+                            }
+                        } // TODO: add audio format
+                        if (choice_menu_format_audio == 2)
+                        {
+                            if (config.get<string>("format audio.enabled", "false") == "true")
+                            {
+                                try
+                                {
+                                    config.put("format audio.enabled", "false");
+                                    cout << "Формат аудио выключен" << endl;
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                            if (config.get<string>("format audio.enabled", "false") == "false")
+                            {
+                                cout << "Формат аудио уже выключен" << endl;
+                            }
+                        }
+                        if (choice_menu_format_audio == 3)
+                        {
+                            if (config.get<string>("format audio.enabled", "false") == "true")
+                            {
+                                cout << "Введите формат аудио: ";
+                                cin >> format_audio;
+                                config.put("format audio.format", format_audio);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                    cout << "Формат аудио изменен" << endl;
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                        }
+                        if (choice_menu_format_audio == 4)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (choice == 4) // about
+            {
+                cout << "YtGrabber-TUI" << endl;
+                cout << "TUI надстрока над yt-dlp" << endl;
+                cout << "Автор: Женя Бородин" << endl;
+                cout << "Версия: 1.1 Alpha 1" << endl;
+            }
+            if (choice == 5)
+            {
+                break;
             }
         }
-        if (choice == 4) // about
-        {
-            cout << "YtGrabber-TUI" << endl;
-            cout << "TUI надстрока над yt-dlp" << endl;
-            cout << "Автор: Женя Бородин" << endl;
-            cout << "Версия: 1.0" << endl;
-        }
-        if (choice == 5)
-        {
-            break;
-        }
     }
-}
