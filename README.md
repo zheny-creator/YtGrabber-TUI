@@ -7,7 +7,7 @@
 Unlike the planned GUI version, **Yt-Grabber-TUI** provides a text-based user interface (TUI), allowing users to work with yt-dlp without learning its command-line arguments.  
 
 
-## System Requirements
+## System Requirements for Linux
 
 **OS:** 64-bit Linux distribution with glibc ≥ 2.31
 
@@ -23,6 +23,29 @@ Unlike the planned GUI version, **Yt-Grabber-TUI** provides a text-based user in
 
 * FFmpeg (for yt-dlp functionality)
 * yt-dlp
+
+## System Requirements for Windows
+
+**OS:**
+Windows 10 (64-bit) or later
+
+**C++ Compiler:**
+
+* MinGW-w64 g++ with C++11 support *(recommended v11 or newer)*
+* MSVC (Visual Studio 2019 or newer)
+
+**C++ Libraries:**
+
+* **Boost 1.83** *(must be built from source; required modules: filesystem, system, thread, process, property_tree for JSON)*
+* **fmt** (library for string formatting)
+* **spdlog** (for structured logging output)
+
+**External Utilities:**
+
+* **FFmpeg** (required for yt-dlp functionality)
+* **yt-dlp** (latest release from [https://github.com/yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp))
+
+---
 
 # Build
 
