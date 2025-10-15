@@ -478,7 +478,7 @@ int main()
             cout << "YtGrabber-TUI" << endl;
             cout << "TUI надстрока над yt-dlp" << endl;
             cout << "Автор: Женя Бородин" << endl;
-            cout << "Версия: 1.0 RC" << endl;
+            cout << "Версия: 1.0" << endl;
         }
         if (choice == 5)
         {
