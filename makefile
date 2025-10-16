@@ -1,10 +1,10 @@
 TARGET = yt-grabber-tui
 
 CXX = g++
-CXXFLAGS = -Wall -O2 -Iinclude
-
-LIBS = -lboost_system -lboost_filesystem -lpthread -lfmt
-
+CXXFLAGS = -Wall -O2 -Iinclude -static -static-libstdc++ -static-libgcc
+LDFLAGS = -pthread
+LIBS = -lboost_system -lboost_filesystem -lboost_thread \
+       -lboost_program_options -lboost_regex -lfmt
 SRC_DIR = src
 OBJ_DIR = obj
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)

@@ -8,6 +8,7 @@ int main()
     pt::ptree config;                                                             // for json
     int choice;                                                                   // for choice
     int quality;                                                                  // for quality
+    int quality_audio;                                                            // for quality_video
     int choice_menu_settings;                                                     // for choice_menu_settings
     int choice_menu_quality;                                                      // for choice_menu_quality
     int choice_menu_ffmpeg;                                                       // for choice_menu_ffmpeg
@@ -99,13 +100,21 @@ int main()
         {
             cout << "Введите ссылку на видео: ";
             getline(cin, url); // url
+            cout << "Введите качество аудио: ";
+            if (cin.fail())
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Ошибка ввода! Введите число.\n";
+                continue;
+            }
             if (url.empty())
             {
                 cout << "Ссылка не введена" << endl;
                 continue;
             }
-            audio audio(url);    // for audio
-            audio.download(url); // download
+            audio audio(url, quality_audio, setting_set, config); // for audio
+            audio.download(url, quality_audio, config);           // download
         }
         if (choice == 3)
         {
@@ -559,3 +568,4 @@ int main()
             }
         }
     }
+}
