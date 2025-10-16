@@ -42,7 +42,7 @@ jobs:
           unzip -q boost_1_83_0.zip -d /c/
           cd /c/boost_1_83_0
           ./bootstrap.sh gcc
-          ./b2 --with-system --with-filesystem --with-thread --with-process --with-format link=static runtime-link=static threading=multi variant=release stage
+          ./b2 --with-system --with-filesystem --with-thread --with-format link=static runtime-link=static threading=multi variant=release stage
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=C:\\boost_1_83_0" >> $env:GITHUB_ENV
