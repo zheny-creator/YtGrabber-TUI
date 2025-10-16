@@ -1,4 +1,4 @@
-name: Windows Build (every push)
+name: Build YtGrabber-TUI Windows
 
 on:
   push:
@@ -7,62 +7,53 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up MSYS2
+
+      - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
           update: true
           msystem: MINGW64
-          install: >
-            base-devel
-            mingw-w64-x86_64-toolchain
-            mingw-w64-x86_64-fmt
-            mingw-w64-x86_64-spdlog
-            unzip
-            curl
-            zip
+          install: base-devel unzip curl zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-fmt mingw-w64-x86_64-spdlog
 
       - name: Cache Boost 1.83
         id: cache-boost
         uses: actions/cache@v4
         with:
           path: C:\boost_1_83_0
-          key: ${{ runner.os }}-boost-1.83
+          key: Windows-boost-1.83
 
       - name: Download & Build Boost 1.83
         if: steps.cache-boost.outputs.cache-hit != 'true'
         shell: msys2 {0}
         run: |
-            curl -L -o boost_1_83_0.zip https://archives.boost.io/release/1.83.0/source/boost_1_83_0.zip
-            unzip -q boost_1_83_0.zip -d /c/
-            cd /c/boost_1_83_0
-            ./bootstrap.sh gcc
-            ./b2 --with-system --with-filesystem --with-thread --with-format \
-                link=static runtime-link=static threading=multi variant=release stage
-
+          curl -L -o boost_1_83_0.zip https://archives.boost.io/release/1.83.0/source/boost_1_83_0.zip
+          unzip -q boost_1_83_0.zip -d /c/
+          cd /c/boost_1_83_0
+          ./bootstrap.sh gcc
+          ./b2 toolset=gcc target-os=windows threading=multi link=static runtime-link=static --build-type=complete install
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=C:\\boost_1_83_0" >> $env:GITHUB_ENV
 
-      - name: Build project
+      - name: Build YtGrabber-TUI
         shell: msys2 {0}
         run: |
           g++ -Wall -O2 -std=c++17 \
             -Iinclude \
             -I${BOOST_ROOT} \
             -I${BOOST_ROOT}/boost \
-            -I${BOOST_ROOT}/libs/process/include \
-            -I${BOOST_ROOT}/libs/functional/include \
             -I${BOOST_ROOT}/libs/filesystem/include \
+            -I${BOOST_ROOT}/libs/functional/include \
             -I${BOOST_ROOT}/libs/format/include \
             src/*.cpp \
-            ${BOOST_ROOT}/stage/lib/libboost_filesystem-mgw13-mt-s-x64-1_83.a \
-            ${BOOST_ROOT}/stage/lib/libboost_system-mgw13-mt-s-x64-1_83.a \
+            ${BOOST_ROOT}/stage/lib/libboost_filesystem-mgw*-mt-s-x64-1_83.a \
+            ${BOOST_ROOT}/stage/lib/libboost_system-mgw*-mt-s-x64-1_83.a \
             -lfmt -lspdlog -lwinpthread -lws2_32 \
             -o yt-grabber-tui.exe
 
