@@ -100,13 +100,21 @@ int main()
         {
             cout << "Введите ссылку на видео: ";
             getline(cin, url); // url
-            cout << "Введите качество аудио: ";
-            if (cin.fail())
+            if (config.get<string>("quality audio.enabled", "false") == "true")
             {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Ошибка ввода! Введите число.\n";
-                continue;
+                quality_audio = config.get<int>("quality audio.quality", 128);
+            }
+            else
+            {
+                cout << "Введите качество аудио: ";
+                cin >> quality_audio;
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Ошибка ввода! Введите число.\n";
+                    continue;
+                }
             }
             if (url.empty())
             {
@@ -404,6 +412,7 @@ int main()
                         cout << "4. Назад" << endl;
                         cout << "Выберите действие: ";
                         cin >> choice_menu_yt_dlp;
+                        cin.ignore();
                         if (cin.fail())
                         {
                             cin.clear();
@@ -461,7 +470,7 @@ int main()
                             if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
                             {
                                 cout << "Введите путь к yt-dlp: ";
-                                cin >> path_yt_dlp;
+                                getline(cin, path_yt_dlp);
                                 config.put("Custom Path to yt-dlp.path", path_yt_dlp);
                                 try
                                 {
@@ -484,7 +493,7 @@ int main()
                         }
                     }
                 }
-                else if (choice_menu_settings == 5)
+                if (choice_menu_settings == 5)
                 {
                     while (true)
                     {
@@ -555,17 +564,17 @@ int main()
                     }
                 }
             }
-            if (choice == 4) // about
-            {
-                cout << "YtGrabber-TUI" << endl;
-                cout << "TUI надстрока над yt-dlp" << endl;
-                cout << "Автор: Женя Бородин" << endl;
-                cout << "Версия: 1.1 Alpha 1" << endl;
-            }
-            if (choice == 5)
-            {
-                break;
-            }
+        }
+        if (choice == 4) // about
+        {
+            cout << "YtGrabber-TUI" << endl;
+            cout << "TUI надстрока над yt-dlp" << endl;
+            cout << "Автор: Женя Бородин" << endl;
+            cout << "Версия: 1.1 Alpha 1" << endl;
+        }
+        if (choice == 5)
+        {
+            break;
         }
     }
 }

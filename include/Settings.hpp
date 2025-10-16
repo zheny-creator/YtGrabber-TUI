@@ -75,6 +75,12 @@ public:
         format_audio.put("format", "mp3");
         config.add_child("format audio", format_audio);
 
+        pt::ptree quality_audio;
+
+        quality_audio.put("enabled", false);
+        quality_audio.put("quality", 128);
+        config.add_child("quality audio", quality_audio);
+
 #if defined(__linux__)
         try
         {

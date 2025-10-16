@@ -1,0 +1,69 @@
+name: Windows Build (every push)
+
+on:
+  push:
+    branches:
+      - '**'     # на каждый пуш в любую ветку
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MinGW (g++)
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+          version: latest
+
+      - name: Cache Boost 1.83
+        id: cache-boost
+        uses: actions/cache@v4
+        with:
+          path: C:\boost_1_83_0
+          key: ${{ runner.os }}-boost-1.83
+
+      - name: Download & Build Boost 1.83
+        if: steps.cache-boost.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          curl -L -o boost_1_83_0.zip https://archives.boost.io/release/1.83.0/source/boost_1_83_0.zip
+          unzip -q boost_1_83_0.zip -d /c/
+          cd /c/boost_1_83_0
+          ./bootstrap.bat gcc
+          ./b2 --with-system --with-filesystem --with-thread --with-process --with-format link=static runtime-link=static threading=multi variant=release stage
+
+      - name: Set BOOST_ROOT
+        run: echo "BOOST_ROOT=C:\\boost_1_83_0" >> $env:GITHUB_ENV
+
+      - name: Install dependencies (fmt, spdlog)
+        shell: bash
+        run: |
+          pacman -Sy --noconfirm mingw-w64-x86_64-fmt mingw-w64-x86_64-spdlog
+
+      - name: Build project
+        shell: bash
+        run: |
+          g++ -Wall -O2 -std=c++17 \
+            -Iinclude \
+            -I${BOOST_ROOT} \
+            -I${BOOST_ROOT}/boost \
+            -I${BOOST_ROOT}/libs/process/include \
+            -I${BOOST_ROOT}/libs/functional/include \
+            -I${BOOST_ROOT}/libs/filesystem/include \
+            -I${BOOST_ROOT}/libs/format/include \
+            src/*.cpp \
+            ${BOOST_ROOT}/stage/lib/libboost_filesystem-mgw13-mt-s-x64-1_83.a \
+            ${BOOST_ROOT}/stage/lib/libboost_system-mgw13-mt-s-x64-1_83.a \
+            -lfmt -lspdlog -lwinpthread -lws2_32 \
+            -o yt-grabber-tui.exe
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-grabber-tui-${{ github.sha }}
+          path: yt-grabber-tui.exe
