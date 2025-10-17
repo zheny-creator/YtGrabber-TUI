@@ -6,6 +6,7 @@
 #include <boost/property_tree/ptree.hpp>       // for ptree
 #include <boost/property_tree/json_parser.hpp> // for json_parser
 #include <cstdlib>
+#include <cstdio>
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -18,124 +19,123 @@ namespace pt = boost::property_tree; // for ptree
 class settings_to_json
 {
 private:
-    pt::ptree config;
+        pt::ptree config;
 
 public:
-    settings_to_json(const pt::ptree &config) : config(config) {}
+        settings_to_json(const pt::ptree &config) : config(config) {}
 
-    void create_json_settings(pt::ptree &config)
-    {
+        void create_json_settings(pt::ptree &config)
+        {
 #if (DEBUG)
-        cout << "Создание файла настроек..." << endl;
+                cout << "Создание файла настроек..." << endl;
 #endif
-        fs::path config_dir;
-        fs::path config_file;
+                fs::path config_dir;
+                fs::path config_file;
 #if defined(__linux__)
-        const char *home = getenv("HOME");
-        config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
-        try
-        {
-            fs::create_directories(config_dir);
-        }
-        catch (const fs::filesystem_error &e)
-        {
-            cerr << e.what() << "Ошибка создания директории" << std::endl;
-        }
-        config_file = config_dir / "config.json";
+                const char *home = getenv("HOME");
+                config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
+                try
+                {
+                        fs::create_directories(config_dir);
+                }
+                catch (const fs::filesystem_error &e)
+                {
+                        cerr << e.what() << "Ошибка создания директории" << std::endl;
+                }
+                config_file = config_dir / "config.json";
 #elif defined(_WIN32)
-#endif
-        pt::ptree quality_video;
-        quality_video.put("enabled", false);
-        quality_video.put("quality", 1080);
-        config.add_child("quality", quality_video);
-
-        pt::ptree enabled_thumbnail;
-
-        enabled_thumbnail.put("enabled", true);
-        config.add_child("thumbnail", enabled_thumbnail);
-
-        pt::ptree custom_path_ffmpeg;
-
-        custom_path_ffmpeg.put("enabled", false);
-        custom_path_ffmpeg.put("path", "You path to ffmpeg");
-        config.add_child("Custom Path to ffmpeg", custom_path_ffmpeg);
-
-        pt::ptree custom_path_yt_dlp;
-
-        custom_path_yt_dlp.put("enabled", false);
-        custom_path_yt_dlp.put("path", "You path to yt-dlp");
-        config.add_child("Custom Path to yt-dlp", custom_path_yt_dlp);
-        fs::path temp_file = config_dir / ("temp_config_" + std::to_string(getpid()) + ".json");
-#if defined(_WIN32)
-        temp_file = config_file.parent_path() / ("temp_config_" + std::to_string(GetCurrentProcessId()) + ".json");
+                config_file = "config.json";
 #endif
 
-        try
-        {
-            pt::write_json(temp_file.string(), config);
-            fs::rename(temp_file, config_file);
+                pt::ptree quality_video;
+                quality_video.put("enabled", false);
+                quality_video.put("quality", 1080);
+                config.add_child("quality", quality_video);
+
+                pt::ptree enabled_thumbnail;
+                enabled_thumbnail.put("enabled", true);
+                config.add_child("thumbnail", enabled_thumbnail);
+
+                pt::ptree custom_path_ffmpeg;
+                custom_path_ffmpeg.put("enabled", false);
+                custom_path_ffmpeg.put("path", "You path to ffmpeg");
+                config.add_child("Custom Path to ffmpeg", custom_path_ffmpeg);
+
+                pt::ptree custom_path_yt_dlp;
+                custom_path_yt_dlp.put("enabled", false);
+                custom_path_yt_dlp.put("path", "You path to yt-dlp");
+                config.add_child("Custom Path to yt-dlp", custom_path_yt_dlp);
+
+                char tmpname_buf[L_tmpnam];
+                std::tmpnam(tmpname_buf);
+                fs::path temp_file = config_file.parent_path() / tmpname_buf;
+
+                try
+                {
+                        pt::write_json(temp_file.string(), config);
+                        fs::rename(temp_file, config_file);
 #if (DEBUG)
-            cout << "Файл настроек создан атомарно." << endl;
+                        cout << "Файл настроек создан атомарно." << endl;
 #endif
-        }
-        catch (const std::exception &e)
-        {
-            fs::remove(temp_file);
+                }
+                catch (const std::exception &e)
+                {
+                        fs::remove(temp_file);
 #if (DEBUG)
-            cout << "Файл настроек уже существует или ошибка: " << e.what() << endl;
+                        cout << "Файл настроек уже существует или ошибка: " << e.what() << endl;
 #endif
+                }
         }
-    }
 
-    void load_json_settings(pt::ptree &config)
-    {
-        fs::path config_file;
+        void load_json_settings(pt::ptree &config)
+        {
+                fs::path config_file;
 #if defined(__linux__)
-        const char *home = getenv("HOME");
-        config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
+                const char *home = getenv("HOME");
+                config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
 #endif
 #if defined(__linux__)
-        if (!fs::exists(config_file))
-        {
-            create_json_settings(config);
-        }
-        else
-        {
+                if (!fs::exists(config_file))
+                {
+                        create_json_settings(config);
+                }
+                else
+                {
 #if (DEBUG)
-            cout << "Загрузка настроек..." << endl;
+                        cout << "Загрузка настроек..." << endl;
 #endif
-        }
+                }
 #elif defined(_WIN32)
-        if (!fs::exists("config.json"))
-        {
-            create_json_settings(config);
-        }
-        else
-        {
+                config_file = "config.json";
+                if (!fs::exists(config_file))
+                {
+                        create_json_settings(config);
+                }
+                else
+                {
 #if (DEBUG)
-            cout << "Загрузка настроек..." << endl;
+                        cout << "Загрузка настроек..." << endl;
 #endif
-        }
+                }
 #endif
-
 #if defined(__linux__)
-        try
-        {
-            pt::read_json(config_file.string(), config);
-        }
-        catch (const pt::json_parser::json_parser_error &e)
-        {
-            cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
-        }
+                try
+                {
+                        pt::read_json(config_file.string(), config);
+                }
+                catch (const pt::json_parser::json_parser_error &e)
+                {
+                        cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
+                }
 #elif defined(_WIN32)
-        try
-        {
-            pt::read_json("config.json", config);
-        }
-        catch (const pt::json_parser::json_parser_error &e)
-        {
-            cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
-        }
+                try
+                {
+                        pt::read_json(config_file.string(), config);
+                }
+                catch (const pt::json_parser::json_parser_error &e)
+                {
+                        cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
+                }
 #endif
-    }
+        }
 };
