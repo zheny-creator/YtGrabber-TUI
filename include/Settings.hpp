@@ -10,7 +10,7 @@
 #if defined(_WIN32)
 #include <windows.h>
 #endif
-#define DEBUG false                  // for debug
+#define DEBUG true                   // for debug
 using namespace std;                 // for string
 namespace fs = boost::filesystem;    // for filesystem
 namespace bp = boost::process;       // for child
@@ -23,7 +23,6 @@ private:
 
 public:
         settings_to_json(const pt::ptree &config) : config(config) {}
-
         void create_json_settings(pt::ptree &config)
         {
 #if (DEBUG)
@@ -84,59 +83,68 @@ public:
                 quality_audio.put("quality", 128);
                 config.add_child("quality audio", quality_audio);
 
-                char tmpname_buf[L_tmpnam];
-                std::tmpnam(tmpname_buf);
-                fs::path temp_file = config_file.parent_path() / tmpname_buf;
+#if defined(__linux__)
+                fs::path temp_file;
 
-                try
+                // шаблон должен быть в config_dir и существующей папке
+                std::string temp_template = (config_file.parent_path() / "tmpXXXXXX").string();
+                int fd = mkstemp(&temp_template[0]);
+                if (fd == -1)
                 {
-                        pt::write_json(temp_file.string(), config);
-                        fs::rename(temp_file, config_file);
-#if (DEBUG)
-                        cout << "Файл настроек создан атомарно." << endl;
-#endif
+                        // вместо throw можно выводить ошибку, чтобы не падать
+                        cerr << "Не удалось создать временный файл" << endl;
+                        return;
                 }
-                catch (const std::exception &e)
-                {
-                        fs::remove(temp_file);
+                close(fd);
+                temp_file = temp_template;
+
+                // записываем JSON
+                pt::write_json(temp_file.string(), config);
+
+                // атомарно переименовываем
+                fs::rename(temp_file, config_file);
+
 #if (DEBUG)
-                        cout << "Файл настроек уже существует или ошибка: " << e.what() << endl;
+                cout << "Файл настроек создан атомарно через mkstemp." << endl;
 #endif
-                }
+#elif defined(_WIN32)
+                // Windows — прямое создание
+                pt::write_json(config_file.string(), config);
+#if (DEBUG)
+                cout << "Файл настроек создан (Windows)." << endl;
+#endif
+#endif
         }
 
         void load_json_settings(pt::ptree &config)
         {
                 fs::path config_file;
+
 #if defined(__linux__)
                 const char *home = getenv("HOME");
                 config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
-#endif
-#if defined(__linux__)
+
                 if (!fs::exists(config_file))
-                {
                         create_json_settings(config);
-                }
                 else
                 {
-#if (DEBUG)
+#if DEBUG
                         cout << "Загрузка настроек..." << endl;
 #endif
                 }
+
 #elif defined(_WIN32)
                 config_file = "config.json";
+
                 if (!fs::exists(config_file))
-                {
                         create_json_settings(config);
-                }
                 else
                 {
-#if (DEBUG)
+#if DEBUG
                         cout << "Загрузка настроек..." << endl;
 #endif
                 }
 #endif
-#if defined(__linux__)
                 try
                 {
                         pt::read_json(config_file.string(), config);
@@ -145,15 +153,5 @@ public:
                 {
                         cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
                 }
-#elif defined(_WIN32)
-                try
-                {
-                        pt::read_json(config_file.string(), config);
-                }
-                catch (const pt::json_parser::json_parser_error &e)
-                {
-                        cerr << "Ошибка чтения файла настроек: " << e.what() << endl;
-                }
-#endif
         }
 };
