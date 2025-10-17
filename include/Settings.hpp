@@ -6,6 +6,9 @@
 #include <boost/property_tree/ptree.hpp>       // for ptree
 #include <boost/property_tree/json_parser.hpp> // for json_parser
 #include <cstdlib>
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 #define DEBUG false                  // for debug
 using namespace std;                 // for string
 namespace fs = boost::filesystem;    // for filesystem
@@ -62,25 +65,26 @@ public:
         custom_path_yt_dlp.put("enabled", false);
         custom_path_yt_dlp.put("path", "You path to yt-dlp");
         config.add_child("Custom Path to yt-dlp", custom_path_yt_dlp);
-#if defined(__linux__)
-        try
-        {
-            pt::write_json(config_file.string(), config);
-        }
-        catch (const pt::json_parser::json_parser_error &e)
-        {
-            cerr << "Ошибка записи файла настроек: " << e.what() << endl;
-        }
-#elif defined(_WIN32)
-        try
-        {
-            pt::write_json("config.json", config);
-        }
-        catch (const pt::json_parser::json_parser_error &e)
-        {
-            cerr << "Ошибка записи файла настроек: " << e.what() << endl;
-        }
+        fs::path temp_file = config_dir / ("temp_config_" + std::to_string(getpid()) + ".json");
+#if defined(_WIN32)
+        temp_file = config_file.parent_path() / ("temp_config_" + std::to_string(GetCurrentProcessId()) + ".json");
 #endif
+
+        try
+        {
+            pt::write_json(temp_file.string(), config);
+            fs::rename(temp_file, config_file);
+#if (DEBUG)
+            cout << "Файл настроек создан атомарно." << endl;
+#endif
+        }
+        catch (const std::exception &e)
+        {
+            fs::remove(temp_file);
+#if (DEBUG)
+            cout << "Файл настроек уже существует или ошибка: " << e.what() << endl;
+#endif
+        }
     }
 
     void load_json_settings(pt::ptree &config)
