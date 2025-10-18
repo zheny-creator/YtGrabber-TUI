@@ -19,7 +19,15 @@ jobs:
         with:
           update: true
           msystem: MINGW64
-          install: base-devel unzip curl zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-fmt mingw-w64-x86_64-spdlog
+          install: >
+            base-devel
+            unzip
+            curl
+            zip
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-fmt
+            mingw-w64-x86_64-spdlog
+            mingw-w64-x86_64-python
 
       - name: Cache Boost 1.83
         id: cache-boost
@@ -36,9 +44,9 @@ jobs:
           unzip -q boost_1_83_0.zip -d /c/
           cd /c/boost_1_83_0
           ./bootstrap.sh gcc
-          ./b2 -j8 --keep-going toolset=gcc target-os=windows threading=multi link=static runtime-link=static --build-type=complete stage
-          ./b2 install --prefix=/c/boost_1_83_0/install --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave
-
+          # Сборка без Python, чтобы избежать ошибок pyconfig.h
+          ./b2 -j8 --keep-going toolset=gcc target-os=windows threading=multi link=static runtime-link=static --build-type=complete --without-python stage
+          ./b2 install --prefix=/c/boost_1_83_0/install --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave --without-python
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=C:\\boost_1_83_0" >> $env:GITHUB_ENV
