@@ -34,19 +34,22 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\boost_1_83_0
-          key: Windows-boost-1.83
+          key: Windows-boost-1.83-final
 
       - name: Download & Build Boost 1.83
         if: steps.cache-boost.outputs.cache-hit != 'true'
         shell: msys2 {0}
         run: |
+          echo "Downloading Boost..."
           curl -L -o boost_1_83_0.zip https://archives.boost.io/release/1.83.0/source/boost_1_83_0.zip
           unzip -q boost_1_83_0.zip -d /c/
           cd /c/boost_1_83_0
+          echo "Bootstrapping..."
           ./bootstrap.sh gcc
-          # Сборка без Python, чтобы избежать ошибок pyconfig.h
-          ./b2 -j8 --keep-going toolset=gcc target-os=windows threading=multi link=static runtime-link=static --build-type=complete --without-python stage
-          ./b2 install --prefix=/c/boost_1_83_0/install --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave --without-python
+          echo "Building Boost (without python and locale)..."
+          ./b2 -j8 --keep-going toolset=gcc target-os=windows threading=multi link=static runtime-link=static --build-type=complete --without-python --without-locale stage
+          echo "Installing selected Boost libs..."
+          ./b2 install --prefix=/c/boost_1_83_0/install --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave --without-python --without-locale
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=C:\\boost_1_83_0" >> $env:GITHUB_ENV
@@ -54,6 +57,7 @@ jobs:
       - name: Build YtGrabber-TUI
         shell: msys2 {0}
         run: |
+          echo "Compiling YtGrabber-TUI..."
           g++ -Wall -O2 -std=c++17 \
             -Iinclude \
             -I${BOOST_ROOT} \
@@ -66,6 +70,7 @@ jobs:
             ${BOOST_ROOT}/stage/lib/libboost_system-mgw*-mt-s-x64-1_83.a \
             -lfmt -lspdlog -lwinpthread -lws2_32 \
             -o yt-grabber-tui.exe
+          echo "Build completed successfully."
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
