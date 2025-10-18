@@ -83,6 +83,11 @@ public:
                 quality_audio.put("quality", 128);
                 config.add_child("quality audio", quality_audio);
 
+                pt::ptree experemental_settings;
+
+                experemental_settings.put("enabled", false);
+                config.add_child("experemental settings", experemental_settings);
+
 #if defined(__linux__)
                 fs::path temp_file;
 

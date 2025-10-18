@@ -15,6 +15,7 @@ int main()
     int choice_menu_yt_dlp;                                                       // for choice_menu_yt_dlp
     int choice_menu_preview;                                                      // for choice_menu_preview
     int choice_menu_format_audio;                                                 // for choice _menu_format_audio
+    int menu_experemental;                                                        // for menu_experemental
     string enabled;                                                               // for enabled
     int menu_quality_audio;                                                       // for menu_quality
     int quality_video;                                                            // for quality_video
@@ -55,6 +56,7 @@ int main()
         cout << "3. Настройки" << endl;
         cout << "4. О программе" << endl;
         cout << "5. Выход" << endl;
+        cout << "6. Эксперементальные функции" << endl;
         cout << "Выберите действие: ";
         cin >> choice; // choic
         if (cin.fail())
@@ -651,6 +653,32 @@ int main()
         if (choice == 5)
         {
             break;
+        }
+        if (choice == 6)
+        {
+            if (config.get<string>("experemental settings.enabled", "false") == "true")
+            {
+                while (true)
+                {
+                    cout << "1. Новое меню" << endl;
+                    cout << "2. Назад" << endl;
+                    cout << "Выберите действие: ";
+                    cin >> menu_experemental;
+                    cin.ignore();
+                    if (menu_experemental == 1)
+                    {
+                        cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
+                    }
+                    if (menu_experemental == 2)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (config.get<string>("experemental settings.enabled", "false") == "false")
+            {
+                cout << "Включите экперементальные настройки в config.json" << endl;
+            }
         }
     }
 }
