@@ -128,8 +128,8 @@ public:
                           to_string(quality) + "]"
                                                "\"",
                 "-x",
-                "--audio-format " + audio_format,
-                "\"" + url + "\""};
+                "--audio-format", audio_format,
+                url};
         }
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {

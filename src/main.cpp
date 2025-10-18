@@ -639,18 +639,18 @@ int main()
                         }
                     }
                 }
-                if (choice == 4) // about
-                {
-                    cout << "YtGrabber-TUI" << endl;
-                    cout << "TUI надстрока над yt-dlp" << endl;
-                    cout << "Автор: Женя Бородин" << endl;
-                    cout << "Версия: 1.1 Alpha 1" << endl;
-                }
-                if (choice == 5)
-                {
-                    break;
-                }
             }
+        }
+        if (choice == 4) // about
+        {
+            cout << "YtGrabber-TUI" << endl;
+            cout << "TUI надстрока над yt-dlp" << endl;
+            cout << "Автор: Женя Бородин" << endl;
+            cout << "Версия: 1.1 Alpha 1" << endl;
+        }
+        if (choice == 5)
+        {
+            break;
         }
     }
 }
