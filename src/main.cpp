@@ -16,6 +16,7 @@ int main()
     int choice_menu_preview;                                                      // for choice_menu_preview
     int choice_menu_format_audio;                                                 // for choice _menu_format_audio
     string enabled;                                                               // for enabled
+    int menu_quality_audio;                                                       // for menu_quality
     int quality_video;                                                            // for quality_video
     fs::path path_to_ytdlp = bp::search_path("yt-dlp");                           // for yt-dlp
     fs::path path_to_ffmpeg = bp::search_path("ffmpeg");                          // for ffmpeg
@@ -493,14 +494,17 @@ int main()
                         }
                     }
                 }
-                if (choice_menu_settings == 5)
+                if (choice_menu_settings == 7)
                 {
                     while (true)
                     {
                         cout << "1. Включить" << endl;
                         cout << "2. Выключить" << endl;
-                        cout << "3. Изменить путь" << endl;
+                        cout << "3. Изменить формат аудио" << endl;
                         cout << "4. Назад" << endl;
+                        cout << "Выберите действие: ";
+                        cin >> choice_menu_format_audio;
+                        cin.ignore();
                         if (choice_menu_format_audio == 1)
                         {
                             if (config.get<string>("format audio.enabled", "false") == "false")
@@ -563,18 +567,90 @@ int main()
                         }
                     }
                 }
+                if (choice_menu_settings == 5)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Качество" << endl;
+                        cout << "4. Назад" << endl;
+                        cout << "Выберите действие: ";
+                        cin >> menu_quality_audio;
+                        cin.ignore();
+                        if (menu_quality_audio == 1)
+                        {
+                            if (config.get<string>("quality audio.enabled", "false") == "false")
+                            {
+                                try
+                                {
+                                    config.put("quality audio.enabled", "true");
+                                    cout << "Качество аудио включено" << endl;
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                            else if (config.get<string>("quality audio.enabled", "false") == "true")
+                            {
+                                cout << "Качество аудио уже включено" << endl;
+                            }
+                        }
+                        if (menu_quality_audio == 2)
+                        {
+                            if (config.get<string>("quality audio.enabled", "false") == "true")
+                            {
+                                try
+                                {
+                                    config.put("quality audio.enabled", "false");
+                                    cout << "Качество аудио выключено" << endl;
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                            else if (config.get<string>("quality audio.enabled", "false") == "false")
+                            {
+                                cout << "Качество аудио уже выключено" << endl;
+                            }
+                        }
+                        if (menu_quality_audio == 3)
+                        {
+                            if (config.get<string>("quality audio.enabled", "false") == "true")
+                            {
+                                cout << "Введите качество аудио: ";
+                                cin >> quality_audio;
+                                config.put("quality audio.quality", quality_audio);
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                        }
+                        if (menu_quality_audio == 4)
+                        {
+                            break;
+                        }
+                    }
+                }
+                if (choice == 4) // about
+                {
+                    cout << "YtGrabber-TUI" << endl;
+                    cout << "TUI надстрока над yt-dlp" << endl;
+                    cout << "Автор: Женя Бородин" << endl;
+                    cout << "Версия: 1.1 Alpha 1" << endl;
+                }
+                if (choice == 5)
+                {
+                    break;
+                }
             }
-        }
-        if (choice == 4) // about
-        {
-            cout << "YtGrabber-TUI" << endl;
-            cout << "TUI надстрока над yt-dlp" << endl;
-            cout << "Автор: Женя Бородин" << endl;
-            cout << "Версия: 1.1 Alpha 1" << endl;
-        }
-        if (choice == 5)
-        {
-            break;
         }
     }
 }

@@ -108,16 +108,28 @@ public:
         vector<string> args; // Vector of arguments
         string path_ffmpeg;
         string yt_dlp_path = bp::search_path("yt-dlp").string();
-
+        string audio_format;
         try
         {
             args = {
-                "-f", "-f bestaudio[" + to_string(quality) + "]",
+                "-f", "bestaudio[abr>=" + to_string(quality) + "]",
                 url};
         }
         catch (const bad_alloc &e)
         {
             cerr << e.what() << "Ошибка выделения памяти" << endl;
+        }
+        if (config.get<string>("format audio.enabled", "false") == "true")
+        {
+            audio_format = config.get<string>("format audio.format", "mp3");
+            args = {
+                "-f", "\""
+                      "bestaudio[abr>=" +
+                          to_string(quality) + "]"
+                                               "\"",
+                "-x",
+                "--audio-format " + audio_format,
+                "\"" + url + "\""};
         }
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {
