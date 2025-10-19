@@ -1,5 +1,6 @@
 #include "yt-dlp.hpp" // for yt-dlp
 #define DEBUG true    // for debug
+#include <regex>
 
 int main()
 {
@@ -19,6 +20,7 @@ int main()
     string enabled;                                                               // for enabled
     int menu_quality_audio;                                                       // for menu_quality
     int quality_video;                                                            // for quality_video
+    regex url_regex(R"((https?://|www\.)[^\s/$.?#].[^\s]*)");                     // regex for url
     fs::path path_to_ytdlp = bp::search_path("yt-dlp");                           // for yt-dlp
     fs::path path_to_ffmpeg = bp::search_path("ffmpeg");                          // for ffmpeg
     if (!fs::exists(path_to_ytdlp))                                               // examination of the existence of yt-dlp
@@ -75,6 +77,11 @@ int main()
             if (url.empty())
             {
                 cout << "Ссылка не введена" << endl;
+                continue;
+            }
+            if (!regex_match(url, url_regex))
+            {
+                cout << "Ссылка не является валидным URL" << endl;
                 continue;
             }
             auto q = config.get_child("quality");
