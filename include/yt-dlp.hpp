@@ -1,7 +1,6 @@
 #include <iostream> // for cout
 #include <string>   // for string
 #include "Settings.hpp"
-#include "Log.hpp"              // for log
 #include <boost/process.hpp>    // for child
 #include <boost/filesystem.hpp> // for filesystem
 #include <vector>

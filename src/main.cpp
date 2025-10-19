@@ -1,5 +1,5 @@
 #include "yt-dlp.hpp" // for yt-dlp
-#define DEBUG false   // for debug
+#define DEBUG true    // for debug
 
 int main()
 {
@@ -56,9 +56,9 @@ int main()
         cout << "3. Настройки" << endl;
         cout << "4. О программе" << endl;
         cout << "5. Выход" << endl;
-        cout << "6. Эксперементальные функции" << endl;
+        cout << "6. Экспериментальные функции" << endl;
         cout << "Выберите действие: ";
-        cin >> choice; // choic
+        cin >> choice; // choice
         if (cin.fail())
         {
             cin.clear();

@@ -1,6 +1,5 @@
 #include <iostream>                            // for cout
 #include <string>                              // for string
-#include "Log.hpp"                             // for log
 #include <boost/process.hpp>                   // for child
 #include <boost/filesystem.hpp>                // for filesystem
 #include <boost/property_tree/ptree.hpp>       // for ptree
@@ -85,8 +84,13 @@ public:
 
                 pt::ptree experemental_settings;
 
-                experemental_settings.put("enabled", false);
+                experemental_settings.put("enabled", true);
                 config.add_child("experemental settings", experemental_settings);
+
+                pt::ptree new_experemental_menu;
+
+                new_experemental_menu.put("enabled", true);
+                config.add_child("New experemental menu", new_experemental_menu);
 
 #if defined(__linux__)
                 fs::path temp_file;
