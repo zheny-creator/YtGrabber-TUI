@@ -5,25 +5,25 @@
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
-    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio; // strings for url, settings, path
-    pt::ptree config;                                                             // for json
-    int choice;                                                                   // for choice
-    int quality;                                                                  // for quality
-    int quality_audio;                                                            // for quality_video
-    int choice_menu_settings;                                                     // for choice_menu_settings
-    int choice_menu_quality;                                                      // for choice_menu_quality
-    int choice_menu_ffmpeg;                                                       // for choice_menu_ffmpeg
-    int choice_menu_yt_dlp;                                                       // for choice_menu_yt_dlp
-    int choice_menu_preview;                                                      // for choice_menu_preview
-    int choice_menu_format_audio;                                                 // for choice _menu_format_audio
-    int menu_experemental;                                                        // for menu_experemental
-    string enabled;                                                               // for enabled
-    int menu_quality_audio;                                                       // for menu_quality
-    int quality_video;                                                            // for quality_video
-    regex url_regex(R"((https?://|www\.)[^\s/$.?#].[^\s]*)");                     // regex for url
-    fs::path path_to_ytdlp = bp::search_path("yt-dlp");                           // for yt-dlp
-    fs::path path_to_ffmpeg = bp::search_path("ffmpeg");                          // for ffmpeg
-    if (!fs::exists(path_to_ytdlp))                                               // examination of the existence of yt-dlp
+    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio, format_video; // strings for url, settings, path
+    pt::ptree config;                                                                           // for json
+    int choice;                                                                                 // for choice
+    int quality;                                                                                // for quality
+    int quality_audio;                                                                          // for quality_video
+    int choice_menu_settings;                                                                   // for choice_menu_settings
+    int choice_menu_quality;                                                                    // for choice_menu_quality
+    int choice_menu_ffmpeg;                                                                     // for choice_menu_ffmpeg
+    int choice_menu_yt_dlp;                                                                     // for choice_menu_yt_dlp
+    int choice_menu_preview;                                                                    // for choice_menu_preview
+    int choice_menu_format_audio;                                                               // for choice _menu_format_audio
+    int menu_experemental;                                                                      // for menu_experemental
+    int menu_quality_video;
+    string enabled;                                      // for enabled
+    int menu_quality_audio;                              // for menu_quality
+    int quality_video;                                   // for quality_video
+    fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
+    fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
+    if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
     {
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
@@ -77,11 +77,6 @@ int main()
             if (url.empty())
             {
                 cout << "Ссылка не введена" << endl;
-                continue;
-            }
-            if (!regex_match(url, url_regex))
-            {
-                cout << "Ссылка не является валидным URL" << endl;
                 continue;
             }
             auto q = config.get_child("quality");
@@ -648,6 +643,77 @@ int main()
                         }
                     }
                 }
+                if (choice_menu_settings == 6)
+                {
+                    while (true)
+                    {
+                        cout << "1. Включить" << endl;
+                        cout << "2. Выключить" << endl;
+                        cout << "3. Формат видео" << endl;
+                        cout << "4. Назад" << endl;
+                        cin >> menu_quality_video;
+                        cin.ignore();
+                        if (menu_quality_video == 1)
+                        {
+                            if (config.get<string>("quality video.enabled", "false") == "false")
+                            {
+                                try
+                                {
+                                    config.put("quality video.enabled", "true");
+                                    cout << "Качество видео включено" << endl;
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                                if (config.get<string>("quality video.enabled", "false") == "true")
+                                {
+                                    cout << "Качество видео уже включено" << endl;
+                                }
+                            }
+                            if (menu_quality_video == 2)
+                            {
+                                if (config.get<string>("quality video.enabled", "false") == "true")
+                                {
+                                    try
+                                    {
+                                        config.put("quality video.enabled", "false");
+                                        cout << "Качество видео выключено" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                if (config.get<string>("quality video.enabled", "false") == "false")
+                                {
+                                    cout << "Качество видео уже выключено" << endl;
+                                }
+                                if (menu_quality_video == 3)
+                                {
+                                    if (config.get<string>("quality video.enabled", "false") == "true")
+                                    {
+                                        cout << "Введите формат видео: ";
+                                        cin >> format_video;
+                                        try
+                                        {
+
+                                            config.put("quality video.format", format_video);
+                                        }
+                                        catch (const pt::json_parser::json_parser_error &e)
+                                        {
+                                            cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                        }
+                                    }
+                                }
+                                if (menu_quality_video == 4)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         if (choice == 4) // about
@@ -684,7 +750,7 @@ int main()
             }
             else if (config.get<string>("experemental settings.enabled", "false") == "false")
             {
-                cout << "Включите экперементальные настройки в config.json" << endl;
+                cout << "Включите экпериментальные настройки в config.json" << endl;
             }
         }
     }

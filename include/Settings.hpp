@@ -95,30 +95,42 @@ public:
 #if defined(__linux__)
                 fs::path temp_file;
 
-                // шаблон должен быть в config_dir и существующей папке
-                std::string temp_template = (config_file.parent_path() / "tmpXXXXXX").string();
+                string temp_template = (config_file.parent_path() / "tmpXXXXXX").string();
                 int fd = mkstemp(&temp_template[0]);
                 if (fd == -1)
                 {
-                        // вместо throw можно выводить ошибку, чтобы не падать
+
                         cerr << "Не удалось создать временный файл" << endl;
                         return;
                 }
                 close(fd);
                 temp_file = temp_template;
 
-                // записываем JSON
                 pt::write_json(temp_file.string(), config);
 
-                // атомарно переименовываем
                 fs::rename(temp_file, config_file);
 
 #if (DEBUG)
                 cout << "Файл настроек создан атомарно через mkstemp." << endl;
 #endif
 #elif defined(_WIN32)
-                // Windows — прямое создание
-                pt::write_json(config_file.string(), config);
+                fs::path temp_file;
+
+                string temp_template = (config_file.parent_path() / "tmpXXXXXX").string();
+                int fd = mkstemp(&temp_template[0]);
+                if (fd == -1)
+                {
+
+                        cerr << "Не удалось создать временный файл" << endl;
+                        return;
+                }
+                close(fd);
+                temp_file = temp_template;
+
+                pt::write_json(temp_file.string(), config);
+
+                fs::rename(temp_file, config_file);
+
 #if (DEBUG)
                 cout << "Файл настроек создан (Windows)." << endl;
 #endif
