@@ -26,10 +26,11 @@ public: // Public members
         string path_ffmpeg;
         string yt_dlp_path = bp::search_path("yt-dlp").string();
         vector<string> args; // Vector of arguments
+        string video_format = config.get<string>("format video.format", "mp4");
         try
         {
             args = {
-                "-f", "bestvideo[height<=" + to_string(quality) + "]",
+                "-f", "bestvideo[height<=" + to_string(quality) + "]" + "bestaudio",
                 url};
         }
         catch (const bad_alloc &e)
@@ -74,6 +75,11 @@ public: // Public members
             {
                 yt_dlp_path = config.get<string>("Custom Path to yt-dlp.path", "yt-dlp");
             }
+        }
+        if (config.get<string>("format video.enabled", "false") == "true")
+        {
+
+            args.insert(args.begin() + 2, " --merge-output-format " + video_format);
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)

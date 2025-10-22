@@ -651,66 +651,66 @@ int main()
                         cout << "2. Выключить" << endl;
                         cout << "3. Формат видео" << endl;
                         cout << "4. Назад" << endl;
+                        cout << "Выберите действие: ";
                         cin >> menu_quality_video;
                         cin.ignore();
                         if (menu_quality_video == 1)
                         {
-                            if (config.get<string>("quality video.enabled", "false") == "false")
+                            if (config.get<string>("format video.enabled", "false") == "false")
                             {
                                 try
                                 {
-                                    config.put("quality video.enabled", "true");
+                                    config.put("format video.enabled", "true");
                                     cout << "Качество видео включено" << endl;
                                 }
                                 catch (const pt::json_parser::json_parser_error &e)
                                 {
                                     cout << e.what() << "Ошибка записи файла настроек" << endl;
                                 }
-                                if (config.get<string>("quality video.enabled", "false") == "true")
+                                if (config.get<string>("format video.enabled", "false") == "true")
                                 {
                                     cout << "Качество видео уже включено" << endl;
                                 }
                             }
-                            if (menu_quality_video == 2)
+                        }
+                        if (menu_quality_video == 2)
+                        {
+                            if (config.get<string>("format video.enabled", "false") == "true")
                             {
-                                if (config.get<string>("quality video.enabled", "false") == "true")
+                                try
                                 {
-                                    try
-                                    {
-                                        config.put("quality video.enabled", "false");
-                                        cout << "Качество видео выключено" << endl;
-                                    }
-                                    catch (const pt::json_parser::json_parser_error &e)
-                                    {
-                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                    }
+                                    config.put("format video.enabled", "false");
+                                    cout << "Качество видео выключено" << endl;
                                 }
-                                if (config.get<string>("quality video.enabled", "false") == "false")
+                                catch (const pt::json_parser::json_parser_error &e)
                                 {
-                                    cout << "Качество видео уже выключено" << endl;
-                                }
-                                if (menu_quality_video == 3)
-                                {
-                                    if (config.get<string>("quality video.enabled", "false") == "true")
-                                    {
-                                        cout << "Введите формат видео: ";
-                                        cin >> format_video;
-                                        try
-                                        {
-
-                                            config.put("quality video.format", format_video);
-                                        }
-                                        catch (const pt::json_parser::json_parser_error &e)
-                                        {
-                                            cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                        }
-                                    }
-                                }
-                                if (menu_quality_video == 4)
-                                {
-                                    break;
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
                                 }
                             }
+                            if (config.get<string>("format video.enabled", "false") == "false")
+                            {
+                                cout << "Качество видео уже выключено" << endl;
+                            }
+                        }
+                        if (menu_quality_video == 3)
+                        {
+                            if (config.get<string>("format video.enabled", "false") == "true")
+                            {
+                                cout << "Введите формат видео: ";
+                                cin >> format_video;
+                                try
+                                {
+                                    config.put("format video.format", format_video);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
+                            }
+                        }
+                        if (menu_quality_video == 4)
+                        {
+                            break;
                         }
                     }
                 }
