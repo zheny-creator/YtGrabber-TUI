@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2022  # Стабильнее для Boost 1.83 (GCC ~11/12)
 
     steps:
       - name: Checkout repository
@@ -46,10 +46,10 @@ jobs:
           cd /c/boost_1_83_0
           echo "Bootstrapping..."
           ./bootstrap.sh gcc
-          echo "Building Boost (without python and locale)..."
-          ./b2 -j8 --keep-going toolset=gcc address-model=64 target-os=windows threading=multi link=static runtime-link=static --build-type=complete --without-python --without-locale --debug-configuration stage
+          echo "Building only needed Boost libs..."
+          ./b2 -j8 --keep-going toolset=gcc address-model=64 target-os=windows threading=multi link=static runtime-link=static --build-type=complete --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --without-python --without-locale -d+1 stage
           echo "Installing selected Boost libs..."
-          ./b2 install --prefix=/c/boost_1_83_0/install address-model=64 --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave --without-python --without-locale
+          ./b2 install --prefix=/c/boost_1_83_0/install address-model=64 --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --without-python --without-locale
 
       - name: Set BOOST_ROOT
         run: echo "BOOST_ROOT=C:\\boost_1_83_0\\install" >> $env:GITHUB_ENV
@@ -58,13 +58,13 @@ jobs:
         shell: msys2 {0}
         run: |
           echo "Compiling YtGrabber-TUI..."
-          g++ -Wall -O2 -std=c++17 -m64 \
+          g++ -Wall -O2 -std=c++17 -m64 -static-libgcc -static-libstdc++ \
             -Iinclude \
-            -I${BOOST_ROOT}/include \
-            -I${BOOST_ROOT} \
+            -I${BOOST_ROOT}/include/boost \
             src/*.cpp \
-            ${BOOST_ROOT}/lib/libboost_filesystem-mgw*-mt-s-x64-1_83.a \
-            ${BOOST_ROOT}/lib/libboost_system-mgw*-mt-s-x64-1_83.a \
+            -L${BOOST_ROOT}/lib \
+            -lboost_filesystem-mgw*-mt-s-x64-1_83 \
+            -lboost_system-mgw*-mt-s-x64-1_83 \
             -lfmt -lspdlog -lwinpthread -lws2_32 \
             -o yt-grabber-tui.exe
           echo "Build completed successfully."
