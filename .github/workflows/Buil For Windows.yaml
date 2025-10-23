@@ -33,8 +33,8 @@ jobs:
         id: cache-boost
         uses: actions/cache@v4
         with:
-          path: C:\boost_1_83_0
-          key: Windows-boost-1.83-final
+          path: C:\boost_1_83_0\install
+          key: Windows-boost-1.83-x64-final
 
       - name: Download & Build Boost 1.83
         if: steps.cache-boost.outputs.cache-hit != 'true'
@@ -47,27 +47,24 @@ jobs:
           echo "Bootstrapping..."
           ./bootstrap.sh gcc
           echo "Building Boost (without python and locale)..."
-          ./b2 -j8 --keep-going toolset=gcc target-os=windows threading=multi link=static runtime-link=static --build-type=complete --without-python --without-locale stage
+          ./b2 -j8 --keep-going toolset=gcc address-model=64 target-os=windows threading=multi link=static runtime-link=static --build-type=complete --without-python --without-locale --debug-configuration stage
           echo "Installing selected Boost libs..."
-          ./b2 install --prefix=/c/boost_1_83_0/install --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave --without-python --without-locale
+          ./b2 install --prefix=/c/boost_1_83_0/install address-model=64 --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --with-test --with-url --with-wave --without-python --without-locale
 
       - name: Set BOOST_ROOT
-        run: echo "BOOST_ROOT=C:\\boost_1_83_0" >> $env:GITHUB_ENV
+        run: echo "BOOST_ROOT=C:\\boost_1_83_0\\install" >> $env:GITHUB_ENV
 
       - name: Build YtGrabber-TUI
         shell: msys2 {0}
         run: |
           echo "Compiling YtGrabber-TUI..."
-          g++ -Wall -O2 -std=c++17 \
+          g++ -Wall -O2 -std=c++17 -m64 \
             -Iinclude \
+            -I${BOOST_ROOT}/include \
             -I${BOOST_ROOT} \
-            -I${BOOST_ROOT}/boost \
-            -I${BOOST_ROOT}/libs/filesystem/include \
-            -I${BOOST_ROOT}/libs/functional/include \
-            -I${BOOST_ROOT}/libs/format/include \
             src/*.cpp \
-            ${BOOST_ROOT}/stage/lib/libboost_filesystem-mgw*-mt-s-x64-1_83.a \
-            ${BOOST_ROOT}/stage/lib/libboost_system-mgw*-mt-s-x64-1_83.a \
+            ${BOOST_ROOT}/lib/libboost_filesystem-mgw*-mt-s-x64-1_83.a \
+            ${BOOST_ROOT}/lib/libboost_system-mgw*-mt-s-x64-1_83.a \
             -lfmt -lspdlog -lwinpthread -lws2_32 \
             -o yt-grabber-tui.exe
           echo "Build completed successfully."
