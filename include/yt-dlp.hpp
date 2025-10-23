@@ -30,7 +30,10 @@ public: // Public members
         try
         {
             args = {
-                "-f", "bestvideo[height<=" + to_string(quality) + "]" + "bestaudio",
+                "-f", "\""
+                      "bestvideo[height<=" +
+                          to_string(quality) + "]" + "+" + "bestaudio"
+                                                           "\"",
                 url};
         }
         catch (const bad_alloc &e)
@@ -79,7 +82,8 @@ public: // Public members
         if (config.get<string>("format video.enabled", "false") == "true")
         {
 
-            args.insert(args.begin() + 2, " --merge-output-format " + video_format);
+            args.insert(args.begin(), video_format);
+            args.insert(args.begin(), "--merge-output-format");
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
