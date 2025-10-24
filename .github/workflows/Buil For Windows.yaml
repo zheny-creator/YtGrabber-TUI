@@ -1,4 +1,4 @@
-name: Build YtGrabber-TUI Windows
+name: Build YtGrabber-TUI Windows (Boost 1.84 v1)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-2022
+    runs-on: windows-2022  # Стабильный GCC ~12 для Boost 1.84
 
     steps:
       - name: Checkout repository
@@ -28,23 +28,47 @@ jobs:
             mingw-w64-x86_64-fmt
             mingw-w64-x86_64-spdlog
             mingw-w64-x86_64-python
-            mingw-w64-x86_64-boost
+
+      - name: Cache Boost 1.84
+        id: cache-boost
+        uses: actions/cache@v4
+        with:
+          path: C:\boost_1_84_0\install
+          key: Windows-boost-1.84-x64-v1-final
+
+      - name: Download & Build Boost 1.84 (v1 Process)
+        if: steps.cache-boost.outputs.cache-hit != 'true'
+        shell: msys2 {0}
+        run: |
+          echo "Downloading Boost 1.84..."
+          curl -L -o boost_1_84_0.zip https://archives.boost.io/release/1.84.0/source/boost_1_84_0.zip
+          unzip -q boost_1_84_0.zip -d /c/
+          cd /c/boost_1_84_0
+          echo "Bootstrapping..."
+          ./bootstrap.sh gcc
+          echo "Building needed Boost libs for Process v1..."
+          ./b2 -j8 --keep-going toolset=gcc address-model=64 target-os=windows threading=multi link=static runtime-link=static --build-type=complete --with-process --with-system --with-filesystem --with-thread --with-iostreams --with-chrono --without-python --without-locale --without-test --without-wave --without-url --without-timer -d+1 stage
+          echo "Installing..."
+          ./b2 install --prefix=/c/boost_1_84_0/install address-model=64 --with-process --with-system --with-filesystem --with-thread --with-iostreams --with-chrono --without-python --without-locale --without-test --without-wave --without-url --without-timer
 
       - name: Set BOOST_ROOT
-        run: echo "BOOST_ROOT=/mingw64" >> $env:GITHUB_ENV
+        run: echo "BOOST_ROOT=C:\\boost_1_84_0\\install" >> $env:GITHUB_ENV
 
       - name: Build YtGrabber-TUI
         shell: msys2 {0}
         run: |
-          echo "Compiling YtGrabber-TUI..."
-          g++ -Wall -O2 -std=c++17 -m64 -static-libgcc -static-libstdc++ \
+          echo "Compiling YtGrabber-TUI with Boost.Process v1..."
+          g++ -Wall -O2 -std=c++17 -m64 -DWIN32_LEAN_AND_MEAN \
             -Iinclude \
             -I${BOOST_ROOT}/include/boost \
             src/*.cpp \
             -L${BOOST_ROOT}/lib \
             -lboost_process-mt \
+            -lboost_iostreams-mt \
             -lboost_filesystem-mt \
             -lboost_system-mt \
+            -lboost_thread-mt \
+            -lboost_chrono-mt \
             -lfmt -lspdlog -lwinpthread -lws2_32 \
             -o yt-grabber-tui.exe
           echo "Build completed successfully."
@@ -52,5 +76,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: yt-grabber-tui-${{ github.sha }}
+          name: yt-grabber-tui-${{ github.sha }}-boost184-v1
           path: yt-grabber-tui.exe
