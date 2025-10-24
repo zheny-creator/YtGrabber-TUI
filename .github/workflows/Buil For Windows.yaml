@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-2022  # Стабильнее для Boost 1.83 (GCC ~11/12)
+    runs-on: windows-2022
 
     steps:
       - name: Checkout repository
@@ -47,7 +47,7 @@ jobs:
           echo "Bootstrapping..."
           ./bootstrap.sh gcc
           echo "Building only needed Boost libs..."
-          ./b2 -j8 --keep-going toolset=gcc address-model=64 target-os=windows threading=multi link=static runtime-link=static --build-type=complete --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --without-python --without-locale -d+1 stage
+          ./b2 -j8 --keep-going toolset=gcc address-model=64 target-os=windows threading=multi link=static runtime-link=static --build-type=complete --with-system --with-filesystem --with-thread --with-process --with-format --with-timer -d+1 stage
           echo "Installing selected Boost libs..."
           ./b2 install --prefix=/c/boost_1_83_0/install address-model=64 --with-system --with-filesystem --with-thread --with-process --with-format --with-timer --without-python --without-locale
 
