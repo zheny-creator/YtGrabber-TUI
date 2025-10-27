@@ -11,20 +11,20 @@ int main()
     setlocale(LC_ALL, "ru_RU.UTF-8");
     string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio, format_video; // strings for url, settings, path
     pt::ptree config;                                                                           // for json
-    int choice;                                                                                 // for choice
-    int quality;                                                                                // for quality
-    int quality_audio;                                                                          // for quality_video
-    int choice_menu_settings;                                                                   // for choice_menu_settings
-    int choice_menu_quality;                                                                    // for choice_menu_quality
-    int choice_menu_ffmpeg;                                                                     // for choice_menu_ffmpeg
-    int choice_menu_yt_dlp;                                                                     // for choice_menu_yt_dlp
-    int choice_menu_preview;                                                                    // for choice_menu_preview
-    int choice_menu_format_audio;                                                               // for choice _menu_format_audio
-    int menu_experemental;                                                                      // for menu_experemental
-    int menu_quality_video;
+    int choice = 0;                                                                             // for choice
+    int quality = 0;                                                                            // for quality
+    int quality_audio = 0;                                                                      // for quality_video
+    int choice_menu_settings = 0;                                                               // for choice_menu_settings
+    int choice_menu_quality = 0;                                                                // for choice_menu_quality
+    int choice_menu_ffmpeg = 0;                                                                 // for choice_menu_ffmpeg
+    int choice_menu_yt_dlp = 0;                                                                 // for choice_menu_yt_dlp
+    int choice_menu_preview = 0;                                                                // for choice_menu_preview
+    int choice_menu_format_audio = 0;                                                           // for choice _menu_format_audio
+    int menu_experemental = 0;                                                                  // for menu_experemental
+    int menu_quality_video = 0;
     string enabled;                                      // for enabled
-    int menu_quality_audio;                              // for menu_quality
-    int quality_video;                                   // for quality_video
+    int menu_quality_audio = 0;                          // for menu_quality
+    int quality_video = 0;                               // for quality_video
     fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
     fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
     if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
@@ -744,7 +744,7 @@ int main()
                 cout << "YtGrabber-TUI" << endl;
                 cout << "TUI надстрока над yt-dlp" << endl;
                 cout << "Автор: Женя Бородин" << endl;
-                cout << "Версия: 1.1 Alpha 1" << endl;
+                cout << "Версия: 1.1 Alpha 2" << endl;
             }
             if (choice == 5)
             {

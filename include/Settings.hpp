@@ -82,6 +82,18 @@ public:
                 quality_audio.put("quality", 128);
                 config.add_child("quality audio", quality_audio);
 
+                pt::ptree quality_audio_for_video;
+
+                quality_audio_for_video.put("enabled", false);
+                quality_audio_for_video.put("quality", 128);
+                config.add_child("quality audio for video", quality_audio_for_video);
+
+                pt::ptree subtitles;
+
+                subtitles.put("enabled", false);
+                subtitles.put("language", "en");
+                config.add_child("subtitles", subtitles);
+
                 pt::ptree experemental_settings;
 
                 experemental_settings.put("enabled", true);
