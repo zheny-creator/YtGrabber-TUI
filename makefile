@@ -3,7 +3,7 @@ TARGET = yt-grabber-tui
 CXX = g++
 CXXFLAGS = -Wall -O2 -Iinclude -static -static-libstdc++ -static-libgcc
 LDFLAGS = -pthread
-LIBS = -lboost_system -lboost_filesystem -lboost_thread \
+LIBS = -lboost_system -lboost_filesystem -lboost_thread -lftxui-component -lftxui-dom -lftxui-screen  \
        -lboost_program_options -lboost_regex -lfmt
 SRC_DIR = src
 OBJ_DIR = obj

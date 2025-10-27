@@ -1,6 +1,10 @@
 #include "yt-dlp.hpp" // for yt-dlp
 #define DEBUG true    // for debug
 #include <regex>
+#include <ftxui/component/component.hpp>
+#include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/dom/elements.hpp>
+using namespace ftxui;
 
 int main()
 {
@@ -50,710 +54,727 @@ int main()
 #endif
     settings_to_json json(config);
     json.load_json_settings(config);
-    while (true) // menu
+    if (config.get<string>("New experemental menu.enabled", "false") == "true")
     {
-        cout << "\t====Меню====" << endl;
-        cout << "1. Скачать видео" << endl;
-        cout << "2. Скачать аудио" << endl;
-        cout << "3. Настройки" << endl;
-        cout << "4. О программе" << endl;
-        cout << "5. Выход" << endl;
-        cout << "6. Экспериментальные функции" << endl;
-        cout << "Выберите действие: ";
-        cin >> choice; // choice
-        if (cin.fail())
+        vector<string> menu_experemental = {"1. Скачать видео", "2. Скачать аудио", "3. Настройки", "4. О программе", "5. Выход", "6. Экспериментальные функции"};
+        auto screen = ScreenInteractive::TerminalOutput();
+        auto menu = Menu(&menu_experemental, &choice);
+        auto renderer = Renderer(menu, [&]
+                                 { return vbox({
+                                              separator(),
+                                              text("Меню") | bold | center,
+                                              menu->Render(),
+                                          }) |
+                                          border | center; });
+        screen.Loop(renderer);
+    }
+    else
+    {
+        while (true) // menu
         {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Ошибка ввода! Введите число.\n";
-            continue;
-        }
-        cin.ignore();
-
-        if (choice == 1) // download video
-        {
-            cout << "Введите ссылку на видео: ";
-            getline(cin, url); // url
-            if (url.empty())
+            cout << "\t====Меню====" << endl;
+            cout << "1. Скачать видео" << endl;
+            cout << "2. Скачать аудио" << endl;
+            cout << "3. Настройки" << endl;
+            cout << "4. О программе" << endl;
+            cout << "5. Выход" << endl;
+            cout << "6. Экспериментальные функции" << endl;
+            cout << "Выберите действие: ";
+            cin >> choice; // choice
+            if (cin.fail())
             {
-                cout << "Ссылка не введена" << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Ошибка ввода! Введите число.\n";
                 continue;
             }
-            auto q = config.get_child("quality");
-            string enabled = q.get<string>("enabled", "false");
-            int quality_video = q.get<int>("quality", 1080);
-            if (enabled == "true")
-            {
-                quality = quality_video;
-            }
-            else if (enabled == "false")
-            {
-                cout << "Введите качество видео: ";
-                cin >> quality; // quality
-                if (cin.fail())
-                {
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Ошибка ввода! Введите число.\n";
-                    continue;
-                }
-            }
-            video video1(url, quality, setting_set, config); // for video
-            video1.download(url, quality, config);           // download
-        }
-        if (choice == 2)
-        {
-            cout << "Введите ссылку на видео: ";
-            getline(cin, url); // url
-            if (config.get<string>("quality audio.enabled", "false") == "true")
-            {
-                quality_audio = config.get<int>("quality audio.quality", 128);
-            }
-            else
-            {
-                cout << "Введите качество аудио: ";
-                cin >> quality_audio;
-                if (cin.fail())
-                {
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Ошибка ввода! Введите число.\n";
-                    continue;
-                }
-            }
-            if (url.empty())
-            {
-                cout << "Ссылка не введена" << endl;
-                continue;
-            }
-            audio audio(url, quality_audio, setting_set, config); // for audio
-            audio.download(url, quality_audio, config);           // download
-        }
-        if (choice == 3)
-        {
-            while (true)
-            {
-                cout << "1. Качество видео" << endl;
-                cout << "2. Расположение ffmpeg" << endl;
-                cout << "3. Расположение yt-dlp" << endl;
-                cout << "4. Превью видео" << endl;
-                cout << "5. Качество аудио" << endl;
-                cout << "6. формат видео" << endl;
-                cout << "7. формат аудио" << endl;
-                cout << "8. Выход" << endl;
-                cout << "Выберите действие: ";
-                cin >> choice_menu_settings; // choice
-                if (cin.fail())
-                {
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Ошибка ввода! Введите число.\n";
-                    continue;
-                }
-                cin.ignore();
-                if (choice_menu_settings == 8)
-                {
-                    break;
-                } // quality
-                else if (choice_menu_settings == 1)
-                {
-                    while (true)
-                    {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Изменить качество видео" << endl;
-                        cout << "4. Назад" << endl;
-                        cout << "Выберите действие: "; // quality
-                        cin >> choice_menu_quality;    // choice
-                        if (cin.fail())
-                        {
-                            cin.clear();
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                            cout << "Ошибка ввода! Введите число.\n";
-                            continue;
-                        }
-                        cin.ignore();
-                        if (choice_menu_quality == 1)
-                        {
-                            if (config.get<string>("quality.enabled", "false") == "false")
-                            {
-                                config.put("quality.enabled", "true");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Качество видео включено" << endl;
-                                continue;
-                            } // enabled
-                            else
-                            {
-                                cout << "Качество видео уже включено" << endl;
-                                continue;
-                            } // if video enabled
-                        }
-                        if (choice_menu_quality == 2)
-                        {
-                            if (config.get<string>("quality.enabled", "false") == "true")
-                            {
-                                config.put("quality.enabled", "false");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Качество видео выключено" << endl;
-                                continue;
-                            } // enabled
-                            else
-                            {
-                                cout << "Качество видео уже выключено" << endl;
-                                continue;
-                            } // if video enabled
-                        }
-                        if (choice_menu_quality == 3)
-                        {
-                            if (config.get<string>("quality.enabled", "false") == "true")
-                            {
-                                cout << "Введите качество видео: ";
-                                cin >> quality_video;
-                                config.put("quality.quality", quality_video);
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                continue;
-                            } // quality
-                            else
-                            {
-                                if (config.get<string>("quality.enabled", "false") == "false")
-                                {
-                                    cout << "Качество видео выключено" << endl;
-                                    continue;
-                                }
-                            }
+            cin.ignore();
 
-                        } // quality
-                        if (choice_menu_quality == 4)
-                        {
-                            break;
-                        }
-                    }
-                }
-                else if (choice_menu_settings == 2)
+            if (choice == 1) // download video
+            {
+                cout << "Введите ссылку на видео: ";
+                getline(cin, url); // url
+                if (url.empty())
                 {
-                    while (true)
-                    {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Изменить путь" << endl;
-                        cout << "4. Назад" << endl;
-                        cout << "Выберите действие: "; // ffmpeg
-                        cin >> choice_menu_ffmpeg;     // choice
-                        cin.ignore();
-                        if (cin.fail())
-                        {
-                            cin.clear();
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                            cout << "Ошибка ввода! Введите число.\n";
-                            continue;
-                        }
-                        if (choice_menu_ffmpeg == 1)
-                        {
-                            if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
-                            {
-                                config.put("Custom Path to ffmpeg.enabled", "true");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Путь к ffmpeg включен" << endl;
-                                continue;
-                            } // enabled
-                            else if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
-                            {
-                                cout << "Путь к ffmpeg уже включен" << endl;
-                            }
-                        }
-                        else if (choice_menu_ffmpeg == 2)
-                        {
-                            if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
-                            {
-                                config.put("Custom Path to ffmpeg.enabled", "false");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Путь к ffmpeg выключен" << endl;
-                                continue;
-                            } // enabled
-                            else if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
-                            {
-                                cout << "Путь к ffmpeg уже выключен" << endl;
-                            }
-                        }
-                        else if (choice_menu_ffmpeg == 3)
-                        {
-                            if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
-                            {
-                                cout << "Введите путь к ffmpeg: ";
-                                cin >> path_ffmpeg;
-                                config.put("Custom Path to ffmpeg.path", path_ffmpeg);
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                continue;
-                            } // path
-
-                            else
-                            {
-                                if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
-                                {
-                                    cout << "Путь к ffmpeg выключен" << endl;
-                                    continue;
-                                }
-                            }
-                        }
-                        else if (choice_menu_ffmpeg == 4)
-                        {
-                            break;
-                        }
-                    }
+                    cout << "Ссылка не введена" << endl;
+                    continue;
                 }
-                if (choice_menu_settings == 4)
+                auto q = config.get_child("quality");
+                string enabled = q.get<string>("enabled", "false");
+                int quality_video = q.get<int>("quality", 1080);
+                if (enabled == "true")
                 {
-                    while (true)
-                    {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Назад" << endl;
-                        cout << "Выберите действие: "; // preview
-                        cin >> choice_menu_preview;    // choice
-                        if (cin.fail())
-                        {
-                            cin.clear();
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                            cout << "Ошибка ввода! Введите число.\n";
-                            continue;
-                        }
-                        cin.ignore();
-                        if (choice_menu_preview == 1)
-                        {
-                            if (config.get<string>("thumbnail.enabled", "false") == "false")
-                            {
-                                config.put("thumbnail.enabled", "true");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Предпросмотр включен" << endl;
-                            }
-                            else
-                            {
-                                cout << "Предпросмотр уже включен" << endl;
-                            }
-                        }
-                        if (choice_menu_preview == 2)
-                        {
-                            if (config.get<string>("thumbnail.enabled", "false") == "true")
-                            {
-                                config.put("thumbnail.enabled", "false");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Предпросмотр выключен" << endl;
-                            }
-                            else
-                            {
-                                cout << "Предпросмотр уже выключен" << endl;
-                            }
-                        }
-                        if (choice_menu_preview == 3)
-                        {
-                            break;
-                            ;
-                        }
-                    }
+                    quality = quality_video;
                 }
-                if (choice_menu_settings == 3)
+                else if (enabled == "false")
                 {
-                    while (true)
+                    cout << "Введите качество видео: ";
+                    cin >> quality; // quality
+                    if (cin.fail())
                     {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Изменить путь" << endl;
-                        cout << "4. Назад" << endl;
-                        cout << "Выберите действие: ";
-                        cin >> choice_menu_yt_dlp;
-                        cin.ignore();
-                        if (cin.fail())
-                        {
-                            cin.clear();
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                            cout << "Ошибка ввода! Введите число.\n";
-                            continue;
-                        }
-                        if (choice_menu_yt_dlp == 1)
-                        {
-                            if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
-                            {
-                                config.put("Custom Path to yt-dlp.enabled", "true");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Путь к yt-dlp включен" << endl;
-                                continue;
-                            }
-                            else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
-                            {
-                                cout << "Путь к yt-dlp уже включен" << endl;
-                            }
-                        }
-                        if (choice_menu_yt_dlp == 2)
-                        {
-                            if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
-                            {
-                                config.put("Custom Path to yt-dlp.enabled", "false");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                cout << "Путь к yt-dlp выключен" << endl;
-                                continue;
-                            }
-                            else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
-                            {
-                                if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
-                                {
-                                    cout << "Путь к yt-dlp уже выключен" << endl;
-                                }
-                            }
-                        }
-                        if (choice_menu_yt_dlp == 3)
-                        {
-                            if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
-                            {
-                                cout << "Введите путь к yt-dlp: ";
-                                getline(cin, path_yt_dlp);
-                                config.put("Custom Path to yt-dlp.path", path_yt_dlp);
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                                continue;
-                            }
-                            else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
-                            {
-                                cout << "Путь к yt-dlp выключен" << endl;
-                            }
-                        }
-                        if (choice_menu_yt_dlp == 4)
-                        {
-                            break;
-                        }
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Ошибка ввода! Введите число.\n";
+                        continue;
                     }
                 }
-                if (choice_menu_settings == 7)
-                {
-                    while (true)
-                    {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Изменить формат аудио" << endl;
-                        cout << "4. Назад" << endl;
-                        cout << "Выберите действие: ";
-                        cin >> choice_menu_format_audio;
-                        cin.ignore();
-                        if (choice_menu_format_audio == 1)
-                        {
-                            if (config.get<string>("format audio.enabled", "false") == "false")
-                            {
-                                try
-                                {
-                                    config.put("format audio.enabled", "true");
-                                    cout << "Формат аудио включен" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                            if (config.get<string>("format audio.enabled", "false") == "true")
-                            {
-                                cout << "Формат аудио уже включен" << endl;
-                            }
-                        } // TODO: add audio format
-                        if (choice_menu_format_audio == 2)
-                        {
-                            if (config.get<string>("format audio.enabled", "false") == "true")
-                            {
-                                try
-                                {
-                                    config.put("format audio.enabled", "false");
-                                    cout << "Формат аудио выключен" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                            if (config.get<string>("format audio.enabled", "false") == "false")
-                            {
-                                cout << "Формат аудио уже выключен" << endl;
-                            }
-                        }
-                        if (choice_menu_format_audio == 3)
-                        {
-                            if (config.get<string>("format audio.enabled", "false") == "true")
-                            {
-                                cout << "Введите формат аудио: ";
-                                cin >> format_audio;
-                                config.put("format audio.format", format_audio);
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                    cout << "Формат аудио изменен" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                        }
-                        if (choice_menu_format_audio == 4)
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (choice_menu_settings == 5)
-                {
-                    while (true)
-                    {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Качество" << endl;
-                        cout << "4. Назад" << endl;
-                        cout << "Выберите действие: ";
-                        cin >> menu_quality_audio;
-                        cin.ignore();
-                        if (menu_quality_audio == 1)
-                        {
-                            if (config.get<string>("quality audio.enabled", "false") == "false")
-                            {
-                                try
-                                {
-                                    config.put("quality audio.enabled", "true");
-                                    cout << "Качество аудио включено" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                            else if (config.get<string>("quality audio.enabled", "false") == "true")
-                            {
-                                cout << "Качество аудио уже включено" << endl;
-                            }
-                        }
-                        if (menu_quality_audio == 2)
-                        {
-                            if (config.get<string>("quality audio.enabled", "false") == "true")
-                            {
-                                try
-                                {
-                                    config.put("quality audio.enabled", "false");
-                                    cout << "Качество аудио выключено" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                            else if (config.get<string>("quality audio.enabled", "false") == "false")
-                            {
-                                cout << "Качество аудио уже выключено" << endl;
-                            }
-                        }
-                        if (menu_quality_audio == 3)
-                        {
-                            if (config.get<string>("quality audio.enabled", "false") == "true")
-                            {
-                                cout << "Введите качество аудио: ";
-                                cin >> quality_audio;
-                                config.put("quality audio.quality", quality_audio);
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                        }
-                        if (menu_quality_audio == 4)
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (choice_menu_settings == 6)
-                {
-                    while (true)
-                    {
-                        cout << "1. Включить" << endl;
-                        cout << "2. Выключить" << endl;
-                        cout << "3. Формат видео" << endl;
-                        cout << "4. Назад" << endl;
-                        cout << "Выберите действие: ";
-                        cin >> menu_quality_video;
-                        cin.ignore();
-                        if (menu_quality_video == 1)
-                        {
-                            if (config.get<string>("format video.enabled", "false") == "false")
-                            {
-                                config.put("format video.enabled", "true");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                    cout << "Качество видео включено" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                            else if (config.get<string>("format video.enabled", "false") == "true")
-                            {
-                                cout << "Качество видео уже включено" << endl;
-                            }
-                        }
-                        if (menu_quality_video == 2)
-                        {
-                            if (config.get<string>("format video.enabled", "false") == "true")
-                            {
-                                config.put("format video.enabled", "false");
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                    cout << "Качество видео выключено" << endl;
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                            else if (config.get<string>("format video.enabled", "false") == "false")
-                            {
-                                cout << "Качество видео уже выключено" << endl;
-                            }
-                        }
-                        if (menu_quality_video == 3)
-                        {
-                            if (config.get<string>("format video.enabled", "false") == "true")
-                            {
-                                cout << "Введите формат видео: ";
-                                cin >> format_video;
-                                config.put("format video.format", format_video);
-                                try
-                                {
-                                    pt::write_json(config_file.string(), config);
-                                }
-                                catch (const pt::json_parser::json_parser_error &e)
-                                {
-                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
-                                }
-                            }
-                        }
-                        if (menu_quality_video == 4)
-                        {
-                            break;
-                        }
-                    }
-                }
+                video video1(url, quality, setting_set, config); // for video
+                video1.download(url, quality, config);           // download
             }
-        }
-        if (choice == 4) // about
-        {
-            cout << "YtGrabber-TUI" << endl;
-            cout << "TUI надстрока над yt-dlp" << endl;
-            cout << "Автор: Женя Бородин" << endl;
-            cout << "Версия: 1.1 Alpha 1" << endl;
-        }
-        if (choice == 5)
-        {
-            break;
-        }
-        if (choice == 6)
-        {
-            if (config.get<string>("experemental settings.enabled", "false") == "true")
+            if (choice == 2)
+            {
+                cout << "Введите ссылку на видео: ";
+                getline(cin, url); // url
+                if (config.get<string>("quality audio.enabled", "false") == "true")
+                {
+                    quality_audio = config.get<int>("quality audio.quality", 128);
+                }
+                else
+                {
+                    cout << "Введите качество аудио: ";
+                    cin >> quality_audio;
+                    if (cin.fail())
+                    {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Ошибка ввода! Введите число.\n";
+                        continue;
+                    }
+                }
+                if (url.empty())
+                {
+                    cout << "Ссылка не введена" << endl;
+                    continue;
+                }
+                audio audio(url, quality_audio, setting_set, config); // for audio
+                audio.download(url, quality_audio, config);           // download
+            }
+            if (choice == 3)
             {
                 while (true)
                 {
-                    cout << "1. Новое меню" << endl;
-                    cout << "2. Назад" << endl;
+                    cout << "1. Качество видео" << endl;
+                    cout << "2. Расположение ffmpeg" << endl;
+                    cout << "3. Расположение yt-dlp" << endl;
+                    cout << "4. Превью видео" << endl;
+                    cout << "5. Качество аудио" << endl;
+                    cout << "6. формат видео" << endl;
+                    cout << "7. формат аудио" << endl;
+                    cout << "8. Выход" << endl;
                     cout << "Выберите действие: ";
-                    cin >> menu_experemental;
-                    cin.ignore();
-                    if (menu_experemental == 1)
+                    cin >> choice_menu_settings; // choice
+                    if (cin.fail())
                     {
-                        cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Ошибка ввода! Введите число.\n";
+                        continue;
                     }
-                    if (menu_experemental == 2)
+                    cin.ignore();
+                    if (choice_menu_settings == 8)
                     {
                         break;
+                    } // quality
+                    else if (choice_menu_settings == 1)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Изменить качество видео" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: "; // quality
+                            cin >> choice_menu_quality;    // choice
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
+                            cin.ignore();
+                            if (choice_menu_quality == 1)
+                            {
+                                if (config.get<string>("quality.enabled", "false") == "false")
+                                {
+                                    config.put("quality.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Качество видео включено" << endl;
+                                    continue;
+                                } // enabled
+                                else
+                                {
+                                    cout << "Качество видео уже включено" << endl;
+                                    continue;
+                                } // if video enabled
+                            }
+                            if (choice_menu_quality == 2)
+                            {
+                                if (config.get<string>("quality.enabled", "false") == "true")
+                                {
+                                    config.put("quality.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Качество видео выключено" << endl;
+                                    continue;
+                                } // enabled
+                                else
+                                {
+                                    cout << "Качество видео уже выключено" << endl;
+                                    continue;
+                                } // if video enabled
+                            }
+                            if (choice_menu_quality == 3)
+                            {
+                                if (config.get<string>("quality.enabled", "false") == "true")
+                                {
+                                    cout << "Введите качество видео: ";
+                                    cin >> quality_video;
+                                    config.put("quality.quality", quality_video);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    continue;
+                                } // quality
+                                else
+                                {
+                                    if (config.get<string>("quality.enabled", "false") == "false")
+                                    {
+                                        cout << "Качество видео выключено" << endl;
+                                        continue;
+                                    }
+                                }
+
+                            } // quality
+                            if (choice_menu_quality == 4)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else if (choice_menu_settings == 2)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Изменить путь" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: "; // ffmpeg
+                            cin >> choice_menu_ffmpeg;     // choice
+                            cin.ignore();
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
+                            if (choice_menu_ffmpeg == 1)
+                            {
+                                if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
+                                {
+                                    config.put("Custom Path to ffmpeg.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Путь к ffmpeg включен" << endl;
+                                    continue;
+                                } // enabled
+                                else if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
+                                {
+                                    cout << "Путь к ffmpeg уже включен" << endl;
+                                }
+                            }
+                            else if (choice_menu_ffmpeg == 2)
+                            {
+                                if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
+                                {
+                                    config.put("Custom Path to ffmpeg.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Путь к ffmpeg выключен" << endl;
+                                    continue;
+                                } // enabled
+                                else if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
+                                {
+                                    cout << "Путь к ffmpeg уже выключен" << endl;
+                                }
+                            }
+                            else if (choice_menu_ffmpeg == 3)
+                            {
+                                if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
+                                {
+                                    cout << "Введите путь к ffmpeg: ";
+                                    cin >> path_ffmpeg;
+                                    config.put("Custom Path to ffmpeg.path", path_ffmpeg);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    continue;
+                                } // path
+
+                                else
+                                {
+                                    if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
+                                    {
+                                        cout << "Путь к ffmpeg выключен" << endl;
+                                        continue;
+                                    }
+                                }
+                            }
+                            else if (choice_menu_ffmpeg == 4)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (choice_menu_settings == 4)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Назад" << endl;
+                            cout << "Выберите действие: "; // preview
+                            cin >> choice_menu_preview;    // choice
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
+                            cin.ignore();
+                            if (choice_menu_preview == 1)
+                            {
+                                if (config.get<string>("thumbnail.enabled", "false") == "false")
+                                {
+                                    config.put("thumbnail.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Предпросмотр включен" << endl;
+                                }
+                                else
+                                {
+                                    cout << "Предпросмотр уже включен" << endl;
+                                }
+                            }
+                            if (choice_menu_preview == 2)
+                            {
+                                if (config.get<string>("thumbnail.enabled", "false") == "true")
+                                {
+                                    config.put("thumbnail.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Предпросмотр выключен" << endl;
+                                }
+                                else
+                                {
+                                    cout << "Предпросмотр уже выключен" << endl;
+                                }
+                            }
+                            if (choice_menu_preview == 3)
+                            {
+                                break;
+                                ;
+                            }
+                        }
+                    }
+                    if (choice_menu_settings == 3)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Изменить путь" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: ";
+                            cin >> choice_menu_yt_dlp;
+                            cin.ignore();
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
+                            if (choice_menu_yt_dlp == 1)
+                            {
+                                if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                                {
+                                    config.put("Custom Path to yt-dlp.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Путь к yt-dlp включен" << endl;
+                                    continue;
+                                }
+                                else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+                                {
+                                    cout << "Путь к yt-dlp уже включен" << endl;
+                                }
+                            }
+                            if (choice_menu_yt_dlp == 2)
+                            {
+                                if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+                                {
+                                    config.put("Custom Path to yt-dlp.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    cout << "Путь к yt-dlp выключен" << endl;
+                                    continue;
+                                }
+                                else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                                {
+                                    if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                                    {
+                                        cout << "Путь к yt-dlp уже выключен" << endl;
+                                    }
+                                }
+                            }
+                            if (choice_menu_yt_dlp == 3)
+                            {
+                                if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+                                {
+                                    cout << "Введите путь к yt-dlp: ";
+                                    getline(cin, path_yt_dlp);
+                                    config.put("Custom Path to yt-dlp.path", path_yt_dlp);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                    continue;
+                                }
+                                else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+                                {
+                                    cout << "Путь к yt-dlp выключен" << endl;
+                                }
+                            }
+                            if (choice_menu_yt_dlp == 4)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (choice_menu_settings == 7)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Изменить формат аудио" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: ";
+                            cin >> choice_menu_format_audio;
+                            cin.ignore();
+                            if (choice_menu_format_audio == 1)
+                            {
+                                if (config.get<string>("format audio.enabled", "false") == "false")
+                                {
+                                    try
+                                    {
+                                        config.put("format audio.enabled", "true");
+                                        cout << "Формат аудио включен" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                if (config.get<string>("format audio.enabled", "false") == "true")
+                                {
+                                    cout << "Формат аудио уже включен" << endl;
+                                }
+                            } // TODO: add audio format
+                            if (choice_menu_format_audio == 2)
+                            {
+                                if (config.get<string>("format audio.enabled", "false") == "true")
+                                {
+                                    try
+                                    {
+                                        config.put("format audio.enabled", "false");
+                                        cout << "Формат аудио выключен" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                if (config.get<string>("format audio.enabled", "false") == "false")
+                                {
+                                    cout << "Формат аудио уже выключен" << endl;
+                                }
+                            }
+                            if (choice_menu_format_audio == 3)
+                            {
+                                if (config.get<string>("format audio.enabled", "false") == "true")
+                                {
+                                    cout << "Введите формат аудио: ";
+                                    cin >> format_audio;
+                                    config.put("format audio.format", format_audio);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                        cout << "Формат аудио изменен" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                            }
+                            if (choice_menu_format_audio == 4)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (choice_menu_settings == 5)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Качество" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: ";
+                            cin >> menu_quality_audio;
+                            cin.ignore();
+                            if (menu_quality_audio == 1)
+                            {
+                                if (config.get<string>("quality audio.enabled", "false") == "false")
+                                {
+                                    try
+                                    {
+                                        config.put("quality audio.enabled", "true");
+                                        cout << "Качество аудио включено" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("quality audio.enabled", "false") == "true")
+                                {
+                                    cout << "Качество аудио уже включено" << endl;
+                                }
+                            }
+                            if (menu_quality_audio == 2)
+                            {
+                                if (config.get<string>("quality audio.enabled", "false") == "true")
+                                {
+                                    try
+                                    {
+                                        config.put("quality audio.enabled", "false");
+                                        cout << "Качество аудио выключено" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("quality audio.enabled", "false") == "false")
+                                {
+                                    cout << "Качество аудио уже выключено" << endl;
+                                }
+                            }
+                            if (menu_quality_audio == 3)
+                            {
+                                if (config.get<string>("quality audio.enabled", "false") == "true")
+                                {
+                                    cout << "Введите качество аудио: ";
+                                    cin >> quality_audio;
+                                    config.put("quality audio.quality", quality_audio);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                            }
+                            if (menu_quality_audio == 4)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (choice_menu_settings == 6)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Формат видео" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: ";
+                            cin >> menu_quality_video;
+                            cin.ignore();
+                            if (menu_quality_video == 1)
+                            {
+                                if (config.get<string>("format video.enabled", "false") == "false")
+                                {
+                                    config.put("format video.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                        cout << "Качество видео включено" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("format video.enabled", "false") == "true")
+                                {
+                                    cout << "Качество видео уже включено" << endl;
+                                }
+                            }
+                            if (menu_quality_video == 2)
+                            {
+                                if (config.get<string>("format video.enabled", "false") == "true")
+                                {
+                                    config.put("format video.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                        cout << "Качество видео выключено" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("format video.enabled", "false") == "false")
+                                {
+                                    cout << "Качество видео уже выключено" << endl;
+                                }
+                            }
+                            if (menu_quality_video == 3)
+                            {
+                                if (config.get<string>("format video.enabled", "false") == "true")
+                                {
+                                    cout << "Введите формат видео: ";
+                                    cin >> format_video;
+                                    config.put("format video.format", format_video);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                            }
+                            if (menu_quality_video == 4)
+                            {
+                                break;
+                            }
+                        }
                     }
                 }
             }
-            else if (config.get<string>("experemental settings.enabled", "false") == "false")
+            if (choice == 4) // about
             {
-                cout << "Включите экпериментальные настройки в config.json" << endl;
+                cout << "YtGrabber-TUI" << endl;
+                cout << "TUI надстрока над yt-dlp" << endl;
+                cout << "Автор: Женя Бородин" << endl;
+                cout << "Версия: 1.1 Alpha 1" << endl;
+            }
+            if (choice == 5)
+            {
+                break;
+            }
+            if (choice == 6)
+            {
+                if (config.get<string>("experemental settings.enabled", "false") == "true")
+                {
+                    while (true)
+                    {
+                        cout << "1. Новое меню" << endl;
+                        cout << "2. Назад" << endl;
+                        cout << "Выберите действие: ";
+                        cin >> menu_experemental;
+                        cin.ignore();
+                        if (menu_experemental == 1)
+                        {
+                            cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
+                        }
+                        if (menu_experemental == 2)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (config.get<string>("experemental settings.enabled", "false") == "false")
+                {
+                    cout << "Включите экпериментальные настройки в config.json" << endl;
+                }
             }
         }
     }
