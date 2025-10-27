@@ -118,27 +118,38 @@ public:
         string path_ffmpeg;
         string yt_dlp_path = bp::search_path("yt-dlp").string();
         string audio_format;
-        try
+        if (quality > 256)
         {
-            args = {
-                "-f", "bestaudio[abr>=" + to_string(quality) + "]",
-                url};
+            try
+            {
+                args = {
+                    "-f", "bestaudio/best",
+                    url};
+            }
+            catch (const bad_alloc &e)
+            {
+                cerr << e.what() << "Ошибка выделения памяти" << endl;
+            }
         }
-        catch (const bad_alloc &e)
+        else
         {
-            cerr << e.what() << "Ошибка выделения памяти" << endl;
+            try
+            {
+                args = {
+                    "-f", "bestaudio[abr>=" + to_string(quality) + "]",
+                    url};
+            }
+            catch (const bad_alloc &e)
+            {
+                cerr << e.what() << "Ошибка выделения памяти" << endl;
+            }
         }
         if (config.get<string>("format audio.enabled", "false") == "true")
         {
             audio_format = config.get<string>("format audio.format", "mp3");
-            args = {
-                "-f", "\""
-                      "bestaudio[abr>=" +
-                          to_string(quality) + "]"
-                                               "\"",
-                "-x",
-                "--audio-format", audio_format,
-                url};
+            args.push_back(audio_format);
+            args.push_back("--audio-format");
+            args.push_back("-x");
         }
         if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
         {

@@ -61,8 +61,8 @@ int main()
         auto menu = Menu(&menu_experemental, &choice);
         auto renderer = Renderer(menu, [&]
                                  { return vbox({
-                                              separator(),
                                               text("Меню") | bold | center,
+                                              separator(),
                                               menu->Render(),
                                           }) |
                                           border | center; });
