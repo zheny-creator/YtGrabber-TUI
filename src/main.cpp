@@ -9,22 +9,23 @@ using namespace ftxui;
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
-    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio, format_video; // strings for url, settings, path
-    pt::ptree config;                                                                           // for json
-    int choice = 0;                                                                             // for choice
-    int quality = 0;                                                                            // for quality
-    int quality_audio = 0;                                                                      // for quality_video
-    int choice_menu_settings = 0;                                                               // for choice_menu_settings
-    int choice_menu_quality = 0;                                                                // for choice_menu_quality
-    int choice_menu_ffmpeg = 0;                                                                 // for choice_menu_ffmpeg
-    int choice_menu_yt_dlp = 0;                                                                 // for choice_menu_yt_dlp
-    int choice_menu_preview = 0;                                                                // for choice_menu_preview
-    int choice_menu_format_audio = 0;                                                           // for choice _menu_format_audio
-    int menu_experemental = 0;                                                                  // for menu_experemental
+    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio, format_video, subtitles_language; // strings for url, settings, path
+    pt::ptree config;                                                                                               // for json
+    int choice = 0;                                                                                                 // for choice
+    int quality = 0;                                                                                                // for quality
+    int quality_audio = 0;                                                                                          // for quality_video
+    int choice_menu_settings = 0;                                                                                   // for choice_menu_settings
+    int choice_menu_quality = 0;                                                                                    // for choice_menu_quality
+    int choice_menu_ffmpeg = 0;                                                                                     // for choice_menu_ffmpeg
+    int choice_menu_yt_dlp = 0;                                                                                     // for choice_menu_yt_dlp
+    int choice_menu_preview = 0;                                                                                    // for choice_menu_preview
+    int choice_menu_format_audio = 0;                                                                               // for choice _menu_format_audio
+    int menu_experemental = 0;                                                                                      // for menu_experemental
     int menu_quality_video = 0;
     string enabled;                                      // for enabled
     int menu_quality_audio = 0;                          // for menu_quality
     int quality_video = 0;                               // for quality_video
+    int subtitles_menu = 0;                              // for subtitles
     fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
     fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
     if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
@@ -160,7 +161,9 @@ int main()
                     cout << "5. Качество аудио" << endl;
                     cout << "6. формат видео" << endl;
                     cout << "7. формат аудио" << endl;
-                    cout << "8. Выход" << endl;
+                    cout << "8. Субтитры" << endl;
+                    cout << "9. Качество аудио для видео" << endl;
+                    cout << "10. Выход" << endl;
                     cout << "Выберите действие: ";
                     cin >> choice_menu_settings; // choice
                     if (cin.fail())
@@ -171,7 +174,7 @@ int main()
                         continue;
                     }
                     cin.ignore();
-                    if (choice_menu_settings == 8)
+                    if (choice_menu_settings == 10)
                     {
                         break;
                     } // quality
@@ -734,6 +737,76 @@ int main()
                             if (menu_quality_video == 4)
                             {
                                 break;
+                            }
+                        }
+                    }
+                    if (choice_menu_settings == 7)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Язык субтитров" << endl;
+                            cout << "4. Назад" << endl;
+                            cin >> subtitles_menu;
+                            cin.ignore();
+                            if (subtitles_menu == 1)
+                            {
+                                if (config.get<string>("subtitles.enabled", "false") == "false")
+                                {
+                                    config.put("subtitles.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                        cout << "Субтитры включены" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("subtitles.enabled", "false") == "true")
+                                {
+                                    cout << "Субтитры уже включены" << endl;
+                                }
+                            }
+                            if (subtitles_menu == 2)
+                            {
+                                if (config.get<string>("subtitles.enabled", "false") == "true")
+                                {
+                                    config.put("subtitles.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                        cout << "Субтитры выключены" << endl;
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("subtitles.enabled", "false") == "false")
+                                {
+                                    cout << "Субтитры уже выключены" << endl;
+                                }
+                            }
+                            if (subtitles_menu == 3)
+                            {
+                                if (config.get<string>("subtitles.enabled", "false") == "true")
+                                {
+                                    cout << "Введите язык субтитров: ";
+                                    cin >> subtitles_language;
+                                    config.put("subtitles.language", subtitles_language);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
                             }
                         }
                     }
