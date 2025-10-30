@@ -27,6 +27,7 @@ public: // Public members
         string yt_dlp_path = bp::search_path("yt-dlp").string();
         vector<string> args; // Vector of arguments
         string video_format = config.get<string>("format video.format", "mp4");
+        string sub_lang = config.get<string>("subtitles.language", "en");
         try
         {
             args = {
@@ -85,6 +86,14 @@ public: // Public members
             args.insert(args.begin(), video_format);
             args.insert(args.begin(), "--merge-output-format");
         }
+        if (config.get<string>("subtitles.enabled", "false") == "true")
+        {
+            sub_lang = config.get<string>("subtitles.language", "en");
+            args.insert(args.begin(), sub_lang);
+            args.insert(args.begin(), "sub-lang ");
+            args.insert(args.begin(), "--embed-subs ");
+            args.insert(args.begin(), "--write-subs ");
+        }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
             cout << a << " ";
@@ -118,6 +127,7 @@ public:
         string path_ffmpeg;
         string yt_dlp_path = bp::search_path("yt-dlp").string();
         string audio_format;
+        string sub_lang;
         if (quality > 256)
         {
             try

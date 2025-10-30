@@ -740,7 +740,7 @@ int main()
                             }
                         }
                     }
-                    if (choice_menu_settings == 7)
+                    if (choice_menu_settings == 8)
                     {
                         while (true)
                         {
@@ -807,6 +807,10 @@ int main()
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
+                            }
+                            if (subtitles_menu == 4)
+                            {
+                                break;
                             }
                         }
                     }
