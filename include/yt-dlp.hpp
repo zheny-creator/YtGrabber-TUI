@@ -88,11 +88,21 @@ public: // Public members
         }
         if (config.get<string>("subtitles.enabled", "false") == "true")
         {
-            sub_lang = config.get<string>("subtitles.language", "en");
-            args.insert(args.begin(), sub_lang);
-            args.insert(args.begin(), "sub-lang ");
-            args.insert(args.begin(), "--embed-subs ");
-            args.insert(args.begin(), "--write-subs ");
+            if (config.get<string>("subtitles.auto", "false") == "false")
+            {
+                sub_lang = config.get<string>("subtitles.language", "en");
+                args.insert(args.begin(), sub_lang);
+                args.insert(args.begin(), "--sub-lang ");
+                args.insert(args.begin(), "--embed-subs ");
+                args.insert(args.begin(), "--write-subs ");
+            }
+            else if (config.get<string>("subtitles.enabled", "false") == "true")
+            {
+                sub_lang = config.get<string>("subtitles.language", "en");
+                args.insert(args.begin(), sub_lang);
+                args.insert(args.begin(), "--sub-lang ");
+                args.insert(args.begin(), " --write-auto-subs ");
+            }
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)

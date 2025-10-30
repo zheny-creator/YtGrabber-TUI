@@ -92,6 +92,7 @@ public:
 
                 subtitles.put("enabled", false);
                 subtitles.put("language", "en");
+                subtitles.put("auto", false);
                 config.add_child("subtitles", subtitles);
 
                 pt::ptree experemental_settings;
