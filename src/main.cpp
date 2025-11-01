@@ -22,10 +22,12 @@ int main()
     int choice_menu_format_audio = 0;                                                                               // for choice _menu_format_audio
     int menu_experemental = 0;                                                                                      // for menu_experemental
     int menu_quality_video = 0;
-    string enabled;                                      // for enabled
-    int menu_quality_audio = 0;                          // for menu_quality
-    int quality_video = 0;                               // for quality_video
-    int subtitles_menu = 0;                              // for subtitles
+    string enabled;             // for enabled
+    int menu_quality_audio = 0; // for menu_quality
+    int quality_video = 0;      // for quality_video
+    int subtitles_menu = 0;     // for subtitles
+    int menu_quality_audio_for_video = 0;
+    int quality_audio_for_video = 0;
     fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
     fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
     if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
@@ -814,43 +816,110 @@ int main()
                             }
                         }
                     }
-                }
-            }
-            if (choice == 4) // about
-            {
-                cout << "YtGrabber-TUI" << endl;
-                cout << "TUI надстрока над yt-dlp" << endl;
-                cout << "Автор: Женя Бородин" << endl;
-                cout << "Версия: 1.1 Alpha 2" << endl;
-            }
-            if (choice == 5)
-            {
-                break;
-            }
-            if (choice == 6)
-            {
-                if (config.get<string>("experemental settings.enabled", "false") == "true")
-                {
-                    while (true)
+                    if (choice_menu_settings == 9)
                     {
-                        cout << "1. Новое меню" << endl;
-                        cout << "2. Назад" << endl;
-                        cout << "Выберите действие: ";
-                        cin >> menu_experemental;
-                        cin.ignore();
-                        if (menu_experemental == 1)
+                        while (true)
                         {
-                            cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
-                        }
-                        if (menu_experemental == 2)
-                        {
-                            break;
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Качество" << endl;
+                            cout << "4. Назад" << endl;
+                            cin >> menu_quality_audio_for_video;
+                            cin.ignore();
+                            if (menu_quality_audio_for_video == 1)
+                            {
+                                if (config.get<string>("quality_audio_for_video", "false") == "false")
+                                {
+                                    config.put("quality_audio_for_video", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("quality_audio_for_video", "false") == "true")
+                                {
+                                    cout << "Качество уже включено" << endl;
+                                }
+                            }
+                            if (menu_quality_audio_for_video == 2)
+                            {
+                                if (config.get<string>("quality_audio_for_video", "false") == "true")
+                                {
+                                    config.put("quality_audio_for_video", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("quality_audio_for_video", "false") == "false")
+                                {
+                                    cout << "Качество уже выключено" << endl;
+                                }
+                            }
+                            if (menu_quality_audio_for_video == 3)
+                            {
+                                if (config.get<string>("quality_audio_for_video", "false") == "true")
+                                {
+                                    cout << "Введите качество: ";
+                                    cin >> quality_audio_for_video;
+                                    config.put("quality_audio_for_video.quality", quality_audio_for_video);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                else if (config.get<string>("experemental settings.enabled", "false") == "false")
+                if (choice == 4) // about
                 {
-                    cout << "Включите экпериментальные настройки в config.json" << endl;
+                    cout << "YtGrabber-TUI" << endl;
+                    cout << "TUI надстрока над yt-dlp" << endl;
+                    cout << "Автор: Женя Бородин" << endl;
+                    cout << "Версия: 1.1 Alpha 2" << endl;
+                }
+                if (choice == 5)
+                {
+                    break;
+                }
+                if (choice == 6)
+                {
+                    if (config.get<string>("experemental settings.enabled", "false") == "true")
+                    {
+                        while (true)
+                        {
+                            cout << "1. Новое меню" << endl;
+                            cout << "2. Назад" << endl;
+                            cout << "Выберите действие: ";
+                            cin >> menu_experemental;
+                            cin.ignore();
+                            if (menu_experemental == 1)
+                            {
+                                cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
+                            }
+                            if (menu_experemental == 2)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else if (config.get<string>("experemental settings.enabled", "false") == "false")
+                    {
+                        cout << "Включите экпериментальные настройки в config.json" << endl;
+                    }
                 }
             }
         }
