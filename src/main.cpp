@@ -81,7 +81,6 @@ int main()
             cout << "3. Настройки" << endl;
             cout << "4. О программе" << endl;
             cout << "5. Выход" << endl;
-            cout << "6. Экспериментальные функции" << endl;
             cout << "Выберите действие: ";
             cin >> choice; // choice
             if (cin.fail())
@@ -166,6 +165,7 @@ int main()
                     cout << "8. Субтитры" << endl;
                     cout << "9. Качество аудио для видео" << endl;
                     cout << "10. Выход" << endl;
+                    cout << "11. Экспериментальные настройки" << endl;
                     cout << "Выберите действие: ";
                     cin >> choice_menu_settings; // choice
                     if (cin.fail())
@@ -883,6 +883,32 @@ int main()
                             }
                         }
                     }
+                    if (choice_menu_settings == 11)
+                    {
+                        if (config.get<string>("experemental settings.enabled", "false") == "true")
+                        {
+                            while (true)
+                            {
+                                cout << "1. Новое меню" << endl;
+                                cout << "2. Назад" << endl;
+                                cout << "Выберите действие: ";
+                                cin >> menu_experemental;
+                                cin.ignore();
+                                if (menu_experemental == 1)
+                                {
+                                    cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
+                                }
+                                if (menu_experemental == 2)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        else if (config.get<string>("experemental settings.enabled", "false") == "false")
+                        {
+                            cout << "Включите экпериментальные настройки в config.json" << endl;
+                        }
+                    }
                 }
                 if (choice == 4) // about
                 {
@@ -894,32 +920,6 @@ int main()
                 if (choice == 5)
                 {
                     break;
-                }
-                if (choice == 6)
-                {
-                    if (config.get<string>("experemental settings.enabled", "false") == "true")
-                    {
-                        while (true)
-                        {
-                            cout << "1. Новое меню" << endl;
-                            cout << "2. Назад" << endl;
-                            cout << "Выберите действие: ";
-                            cin >> menu_experemental;
-                            cin.ignore();
-                            if (menu_experemental == 1)
-                            {
-                                cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
-                            }
-                            if (menu_experemental == 2)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else if (config.get<string>("experemental settings.enabled", "false") == "false")
-                    {
-                        cout << "Включите экпериментальные настройки в config.json" << endl;
-                    }
                 }
             }
         }
