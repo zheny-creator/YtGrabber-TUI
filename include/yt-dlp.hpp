@@ -28,6 +28,12 @@ public: // Public members
         vector<string> args; // Vector of arguments
         string video_format = config.get<string>("format video.format", "mp4");
         string sub_lang = config.get<string>("subtitles.language", "en");
+        string bestaudio = "bestaudio";
+        string bestaudio_quality = config.get<string>("quality_audio_for_video.quality", "128");
+        if (config.get<string>("quality_audio_for_video.enabled", "false") == "true")
+        {
+            bestaudio = "bestaudio[abr<= " + bestaudio_quality + "]";
+        }
         try
         {
             args = {
