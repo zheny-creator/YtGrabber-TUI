@@ -749,7 +749,8 @@ int main()
                             cout << "1. Включить" << endl;
                             cout << "2. Выключить" << endl;
                             cout << "3. Язык субтитров" << endl;
-                            cout << "4. Назад" << endl;
+                            cout << "4. Включить/Отключить автоматические субтитры" << endl;
+                            cout << "5. Назад" << endl;
                             cin >> subtitles_menu;
                             cin.ignore();
                             if (subtitles_menu == 1)
@@ -810,9 +811,28 @@ int main()
                                     }
                                 }
                             }
-                            if (subtitles_menu == 4)
+                            if (subtitles_menu == 5)
                             {
                                 break;
+                            }
+                            if (subtitles_menu == 4)
+                            {
+                                if (config.get<string>("subtitles.auto", "false") == "true")
+                                {
+                                    config.put("subtitles.auto", "false");
+                                }
+                                else if (config.get<string>("subtitles.auto", "false") == "false")
+                                {
+                                    config.put("subtitles.auto", "true");
+                                }
+                                try
+                                {
+                                    pt::write_json(config_file.string(), config);
+                                }
+                                catch (const pt::json_parser::json_parser_error &e)
+                                {
+                                    cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                }
                             }
                         }
                     }
