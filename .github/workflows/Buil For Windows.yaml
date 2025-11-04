@@ -8,8 +8,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-2022  # Стабильный GCC ~12 для Boost 1.84
-
+    runs-on: windows-2022 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

@@ -18,10 +18,18 @@ jobs:
             nlohmann-json3-dev \
             libfmt-dev \
             libspdlog-dev \
-            libftxui-dev \
-            libftxui-component5.0.0 \
-            libftxui-dom5.0.0 \
-            libftxui-screen5.0.0 \
+            git \
+            pkg-config
+          git clone https://github.com/ArthurSonzogni/FTXUI.git
+          cd FTXUI
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            -DBUILD_SHARED_LIBS=OFF
+          cmake --build build -j$(nproc)
+          sudo cmake --install build
+          cd ..
 
       - name: Build
         run: make
