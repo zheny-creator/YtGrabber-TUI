@@ -19,9 +19,13 @@ jobs:
           sudo apt install -y build-essential \
             libboost-all-dev \
             libfmt-dev \
+            libspdlog-dev \
             git \
             cmake \
             pkg-config
+
+      - name: Install FTXUI
+        run: |
           git clone https://github.com/ArthurSonzogni/FTXUI.git
           cd FTXUI
           cmake -B build \
@@ -36,8 +40,15 @@ jobs:
       - name: Build
         run: make
 
+      - name: Create tar archive
+        run: |
+          mkdir libs
+          sudo cp /usr/lib/x86_64-linux-gnu/libftxui*.so libs/ 2>/dev/null || true
+          sudo cp /usr/lib/x86_64-linux-gnu/libfmt.so libs/ 2>/dev/null || true
+          tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
+
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: yt-grabber-tui-${{ github.ref_name }}
-          path: yt-grabber-tui
+          path: yt-grabber-tui.tar
