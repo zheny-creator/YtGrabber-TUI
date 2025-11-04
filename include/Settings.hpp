@@ -105,6 +105,11 @@ public:
                 new_experemental_menu.put("enabled", true);
                 config.add_child("New experemental menu", new_experemental_menu);
 
+                pt::ptree path_to_dowload_video;
+                path_to_dowload_video.put("enabled", false);
+                path_to_dowload_video.put("path", "You path to download video");
+                config.add_child("path to download video", path_to_dowload_video);
+
 #if defined(__linux__)
                 fs::path temp_file;
 

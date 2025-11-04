@@ -30,6 +30,7 @@ public: // Public members
         string sub_lang = config.get<string>("subtitles.language", "en");
         string bestaudio = "bestaudio";
         string bestaudio_quality = config.get<string>("quality_audio_for_video.quality", "128");
+        fs::path dowload_dir = config.get<fs::path>("path to download video.path", "~/Downloads");
         if (config.get<string>("quality_audio_for_video.enabled", "false") == "true")
         {
             bestaudio = "bestaudio[abr<= " + bestaudio_quality + "]";
@@ -109,6 +110,10 @@ public: // Public members
                 args.insert(args.begin(), "--sub-lang ");
                 args.insert(args.begin(), " --write-auto-subs ");
             }
+        }
+        if (config.get<string>("path to download video.enabled", "false") == "true")
+        {
+            fs::current_path(dowload_dir);
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)

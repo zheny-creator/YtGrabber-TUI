@@ -9,18 +9,18 @@ using namespace ftxui;
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
-    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio, format_video, subtitles_language; // strings for url, settings, path
-    pt::ptree config;                                                                                               // for json
-    int choice = 0;                                                                                                 // for choice
-    int quality = 0;                                                                                                // for quality
-    int quality_audio = 0;                                                                                          // for quality_video
-    int choice_menu_settings = 0;                                                                                   // for choice_menu_settings
-    int choice_menu_quality = 0;                                                                                    // for choice_menu_quality
-    int choice_menu_ffmpeg = 0;                                                                                     // for choice_menu_ffmpeg
-    int choice_menu_yt_dlp = 0;                                                                                     // for choice_menu_yt_dlp
-    int choice_menu_preview = 0;                                                                                    // for choice_menu_preview
-    int choice_menu_format_audio = 0;                                                                               // for choice _menu_format_audio
-    int menu_experemental = 0;                                                                                      // for menu_experemental
+    string url, setting_set, setting_get, path_ffmpeg, path_yt_dlp, format_audio, format_video, subtitles_language, dowload_dir; // strings for url, settings, path
+    pt::ptree config;                                                                                                            // for json
+    int choice = 0;                                                                                                              // for choice
+    int quality = 0;                                                                                                             // for quality
+    int quality_audio = 0;                                                                                                       // for quality_video
+    int choice_menu_settings = 0;                                                                                                // for choice_menu_settings
+    int choice_menu_quality = 0;                                                                                                 // for choice_menu_quality
+    int choice_menu_ffmpeg = 0;                                                                                                  // for choice_menu_ffmpeg
+    int choice_menu_yt_dlp = 0;                                                                                                  // for choice_menu_yt_dlp
+    int choice_menu_preview = 0;                                                                                                 // for choice_menu_preview
+    int choice_menu_format_audio = 0;                                                                                            // for choice _menu_format_audio
+    int menu_experemental = 0;                                                                                                   // for menu_experemental
     int menu_quality_video = 0;
     string enabled;             // for enabled
     int menu_quality_audio = 0; // for menu_quality
@@ -28,6 +28,7 @@ int main()
     int subtitles_menu = 0;     // for subtitles
     int menu_quality_audio_for_video = 0;
     int quality_audio_for_video = 0;
+    int menu_dowload_dir = 0;
     fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
     fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
     if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
@@ -164,8 +165,9 @@ int main()
                     cout << "7. формат аудио" << endl;
                     cout << "8. Субтитры" << endl;
                     cout << "9. Качество аудио для видео" << endl;
-                    cout << "10. Выход" << endl;
-                    cout << "11. Экспериментальные настройки" << endl;
+                    cout << "10. Путь по умолчанию для скачивания видео" << endl;
+                    cout << "11. Выход" << endl;
+                    cout << "12. Экспериментальные настройки" << endl;
                     cout << "Выберите действие: ";
                     cin >> choice_menu_settings; // choice
                     if (cin.fail())
@@ -176,7 +178,7 @@ int main()
                         continue;
                     }
                     cin.ignore();
-                    if (choice_menu_settings == 10)
+                    if (choice_menu_settings == 11)
                     {
                         break;
                     } // quality
@@ -751,6 +753,7 @@ int main()
                             cout << "3. Язык субтитров" << endl;
                             cout << "4. Включить/Отключить автоматические субтитры" << endl;
                             cout << "5. Назад" << endl;
+                            cout << "Выберите действие: ";
                             cin >> subtitles_menu;
                             cin.ignore();
                             if (subtitles_menu == 1)
@@ -844,6 +847,7 @@ int main()
                             cout << "2. Выключить" << endl;
                             cout << "3. Качество" << endl;
                             cout << "4. Назад" << endl;
+                            cout << "Выберите действие: ";
                             cin >> menu_quality_audio_for_video;
                             cin.ignore();
                             if (menu_quality_audio_for_video == 1)
@@ -903,7 +907,7 @@ int main()
                             }
                         }
                     }
-                    if (choice_menu_settings == 11)
+                    if (choice_menu_settings == 12)
                     {
                         if (config.get<string>("experemental settings.enabled", "false") == "true")
                         {
@@ -929,18 +933,92 @@ int main()
                             cout << "Включите экпериментальные настройки в config.json" << endl;
                         }
                     }
+                    if (choice_menu_settings == 10)
+                    {
+                        while (true)
+                        {
+                            cout << "1. Включить" << endl;
+                            cout << "2. Выключить" << endl;
+                            cout << "3. Изменить путь" << endl;
+                            cout << "4. Назад" << endl;
+                            cout << "Выберите действие: ";
+                            cin >> menu_dowload_dir;
+                            if (menu_dowload_dir == 1)
+                            {
+                                if (config.get<string>("path to download video.enabled", "false") == "false")
+                                {
+                                    config.put("path to download video.enabled", "true");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("path to download video.enabled", "false") == "true")
+                                {
+                                    if (config.get<string>("path to download video.enabled", "false") == "true")
+                                    {
+                                        cout << "Путь уже включен" << endl;
+                                    }
+                                }
+                            }
+                            if (menu_dowload_dir == 2)
+                            {
+                                if (config.get<string>("path to download video.enabled", "false") == "true")
+                                {
+                                    config.put("path to download video.enabled", "false");
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                                else if (config.get<string>("path to download video.enabled", "false") == "false")
+                                {
+                                    if (config.get<string>("path to download video.enabled", "false") == "false")
+                                    {
+                                        cout << "Путь уже выключен" << endl;
+                                    }
+                                }
+                            }
+                            if (menu_dowload_dir == 3)
+                            {
+                                if (config.get<string>("path to download video.enabled", "false") == "true")
+                                {
+                                    cout << "Введите путь: ";
+                                    cin >> dowload_dir;
+                                    config.put("path to download video.path", dowload_dir);
+                                    try
+                                    {
+                                        pt::write_json(config_file.string(), config);
+                                    }
+                                    catch (const pt::json_parser::json_parser_error &e)
+                                    {
+                                        cout << e.what() << "Ошибка записи файла настроек" << endl;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                if (choice == 4) // about
-                {
-                    cout << "YtGrabber-TUI" << endl;
-                    cout << "TUI надстрока над yt-dlp" << endl;
-                    cout << "Автор: Женя Бородин" << endl;
-                    cout << "Версия: 1.1 Alpha 2" << endl;
-                }
-                if (choice == 5)
-                {
-                    break;
-                }
+            }
+            if (choice == 4) // about
+            {
+                cout << "YtGrabber-TUI" << endl;
+                cout << "TUI надстрока над yt-dlp" << endl;
+                cout << "Автор: Женя Бородин" << endl;
+                cout << "Версия: 1.1 Alpha 2" << endl;
+                cout << "Кодовое имя: Axolotl" << endl;
+            }
+            if (choice == 5)
+            {
+                break;
             }
         }
     }
