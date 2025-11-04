@@ -19,6 +19,9 @@ jobs:
             libfmt-dev \
             libspdlog-dev \
             libftxui-dev \
+            libftxui-component5.0.0 \
+            libftxui-dom5.0.0 \
+            libftxui-screen5.0.0 \
 
       - name: Build
         run: make

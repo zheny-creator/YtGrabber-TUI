@@ -40,7 +40,7 @@ jobs:
         run: |
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace ubuntu:22.04 /bin/bash -c "
             apt-get update
-            apt-get install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev libftxui-dev
+            apt-get install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev libftxui-dev libftxui-component5.0.0 libftxui-dom5.0.0 libftxui-screen5.0.0 ftxui-examples
             make
           "
 
