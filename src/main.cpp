@@ -1012,7 +1012,6 @@ int main()
             {
                 cout << "YtGrabber-TUI" << endl;
                 cout << "TUI надстрока над yt-dlp" << endl;
-                cout << "Автор: Женя Бородин" << endl;
                 cout << "Версия: 1.1 Alpha 2" << endl;
                 cout << "Кодовое имя: Axolotl" << endl;
             }

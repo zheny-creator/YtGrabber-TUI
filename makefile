@@ -6,8 +6,8 @@ LDFLAGS = -pthread
 LIBS = -Wl,-Bstatic \
        -lboost_system -lboost_filesystem -lboost_thread \
        -lboost_program_options -lboost_regex \
-       -Wl,-Bdynamic \
        -lftxui-component -lftxui-dom -lftxui-screen \
+       -Wl,-Bdynamic \
        -lfmt
 
 SRC_DIR = src

@@ -16,7 +16,13 @@ jobs:
       - name: Build in Alpine (musl x86_64)
         run: |
           docker run --rm -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
-            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake
+            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake wget bash
+            wget https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
+            tar xzf boost_1_85_0.tar.gz
+            cd boost_1_85_0
+            ./bootstrap.sh --prefix=/usr --with-libraries=system,filesystem,thread,program_options,regex
+            ./b2 -j$(nproc) link=static runtime-link=static install
+            cd ..
             git clone https://github.com/ArthurSonzogni/FTXUI.git
             cd FTXUI
             cmake -B build \
@@ -53,7 +59,13 @@ jobs:
       - name: Build in Alpine (musl arm64)
         run: |
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
-            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake
+            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake wget bash
+            wget https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
+            tar xzf boost_1_85_0.tar.gz
+            cd boost_1_85_0
+            ./bootstrap.sh --prefix=/usr --with-libraries=system,filesystem,thread,program_options,regex
+            ./b2 -j$(nproc) link=static runtime-link=static install
+            cd ..
             git clone https://github.com/ArthurSonzogni/FTXUI.git
             cd FTXUI
             cmake -B build \
