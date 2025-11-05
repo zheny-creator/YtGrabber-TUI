@@ -16,27 +16,13 @@ jobs:
       - name: Build in Alpine (musl x86_64)
         run: |
           docker run --rm -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
-            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake wget bash
-            wget https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
-            tar xzf boost_1_85_0.tar.gz
-            cd boost_1_85_0
-            ./bootstrap.sh --prefix=/usr --with-libraries=system,filesystem,thread,program_options,regex
-            ./b2 -j$(nproc) link=static runtime-link=static install
-            cd ..
-            git clone https://github.com/ArthurSonzogni/FTXUI.git
-            cd FTXUI
-            cmake -B build \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_INSTALL_PREFIX=/usr \
-              -DCMAKE_INSTALL_LIBDIR=lib \
-              -DBUILD_SHARED_LIBS=OFF
-            cmake --build build -j$(nproc)
-            cmake --install build
-            cd ..
+            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev ftxui-dev
             make
             mkdir libs
-            cp /usr/lib/libftxui*.so libs/ 2>/dev/null || true
-            cp /usr/lib/libfmt.so libs/ 2>/dev/null || true
+            cp /usr/lib/libboost*.so* libs/ 2>/dev/null || true
+            cp /usr/lib/libftxui*.so* libs/ 2>/dev/null || true
+            cp /usr/lib/libfmt.so* libs/ 2>/dev/null || true
+            cp /usr/lib/libspdlog.so* libs/ 2>/dev/null || true
             tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 
@@ -59,27 +45,13 @@ jobs:
       - name: Build in Alpine (musl arm64)
         run: |
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
-            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake wget bash
-            wget https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.gz
-            tar xzf boost_1_85_0.tar.gz
-            cd boost_1_85_0
-            ./bootstrap.sh --prefix=/usr --with-libraries=system,filesystem,thread,program_options,regex
-            ./b2 -j$(nproc) link=static runtime-link=static install
-            cd ..
-            git clone https://github.com/ArthurSonzogni/FTXUI.git
-            cd FTXUI
-            cmake -B build \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_INSTALL_PREFIX=/usr \
-              -DCMAKE_INSTALL_LIBDIR=lib \
-              -DBUILD_SHARED_LIBS=OFF
-            cmake --build build -j$(nproc)
-            cmake --install build
-            cd ..
+            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev ftxui-dev
             make
             mkdir libs
-            cp /usr/lib/libftxui*.so libs/ 2>/dev/null || true
-            cp /usr/lib/libfmt.so libs/ 2>/dev/null || true
+            cp /usr/lib/libboost*.so* libs/ 2>/dev/null || true
+            cp /usr/lib/libftxui*.so* libs/ 2>/dev/null || true
+            cp /usr/lib/libfmt.so* libs/ 2>/dev/null || true
+            cp /usr/lib/libspdlog.so* libs/ 2>/dev/null || true
             tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 
@@ -103,21 +75,13 @@ jobs:
         run: |
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace ubuntu:22.04 /bin/bash -c "
             apt-get update
-            apt-get install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev git cmake pkg-config
-            git clone https://github.com/ArthurSonzogni/FTXUI.git
-            cd FTXUI
-            cmake -B build \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_INSTALL_PREFIX=/usr \
-              -DCMAKE_INSTALL_LIBDIR=lib \
-              -DBUILD_SHARED_LIBS=OFF
-            cmake --build build -j$(nproc)
-            cmake --install build
-            cd ..
+            apt-get install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev libftxui-dev libftxui-component5.0.0 libftxui-dom5.0.0 libftxui-screen5.0.0 ftxui-examples
             make
             mkdir libs
-            cp /usr/lib/*/libftxui*.so libs/ 2>/dev/null || true
-            cp /usr/lib/*/libfmt.so libs/ 2>/dev/null || true
+            cp /usr/lib/*/libboost*.so* libs/ 2>/dev/null || true
+            cp /usr/lib/*/libftxui*.so* libs/ 2>/dev/null || true
+            cp /usr/lib/*/libfmt.so* libs/ 2>/dev/null || true
+            cp /usr/lib/*/libspdlog.so* libs/ 2>/dev/null || true
             tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 
