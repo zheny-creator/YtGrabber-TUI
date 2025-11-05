@@ -104,8 +104,8 @@ jobs:
             cd ..
             make
             mkdir libs
-            cp /usr/lib/*/libboost*.so* libs/ 2>/dev/null || true
-            cp /usr/lib/*/libfmt.so* libs/ 2>/dev/null || true
+            find /usr/lib -name 'libboost*.so*' -exec cp {} libs/ \; 2>/dev/null || true
+            find /usr/lib -name 'libfmt.so*' -exec cp {} libs/ \; 2>/dev/null || true
             tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 

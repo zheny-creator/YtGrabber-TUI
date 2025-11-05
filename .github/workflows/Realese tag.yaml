@@ -43,7 +43,8 @@ jobs:
       - name: Create tar archive
         run: |
           mkdir libs
-          sudo cp /usr/lib/x86_64-linux-gnu/libfmt.so* libs/ 2>/dev/null || true
+          find /usr/lib -name 'libboost*.so*' -exec sudo cp {} libs/ \; 2>/dev/null || true
+          find /usr/lib -name 'libfmt.so*' -exec sudo cp {} libs/ \; 2>/dev/null || true
           tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
 
       - name: Upload binary
