@@ -43,8 +43,10 @@ jobs:
       - name: Create tar archive
         run: |
           mkdir libs
-          sudo cp /usr/lib/x86_64-linux-gnu/libftxui*.so libs/ 2>/dev/null || true
-          sudo cp /usr/lib/x86_64-linux-gnu/libfmt.so libs/ 2>/dev/null || true
+          sudo cp /usr/lib/x86_64-linux-gnu/libboost*.so* libs/ 2>/dev/null || true
+          sudo cp /usr/lib/x86_64-linux-gnu/libftxui*.so* libs/ 2>/dev/null || true
+          sudo cp /usr/lib/x86_64-linux-gnu/libfmt.so* libs/ 2>/dev/null || true
+          sudo cp /usr/lib/x86_64-linux-gnu/libspdlog.so* libs/ 2>/dev/null || true
           tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
 
       - name: Upload binary
