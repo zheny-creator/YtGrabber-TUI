@@ -4,10 +4,10 @@ CXX = g++
 CXXFLAGS = -Wall -O2 -Iinclude
 LDFLAGS = -pthread
 LIBS = -Wl,-Bstatic \
-       -lboost_system -lboost_filesystem -lboost_thread \
-       -lboost_program_options -lboost_regex \
        -lftxui-component -lftxui-dom -lftxui-screen \
        -Wl,-Bdynamic \
+       -lboost_system -lboost_filesystem -lboost_thread \
+       -lboost_program_options -lboost_regex \
        -lfmt
 
 SRC_DIR = src
