@@ -1,4 +1,4 @@
-name: Build Release
+name: Build Releases
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
       - '*'
 
 jobs:
-  build:
+  build-glibc-x86_64:
     runs-on: ubuntu-22.04
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,39 +15,126 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential \
-            libboost-all-dev \
-            libfmt-dev \
-            libspdlog-dev \
-            git \
-            cmake \
-            pkg-config
+          sudo apt install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev git cmake pkg-config
 
       - name: Install FTXUI
         run: |
           git clone https://github.com/ArthurSonzogni/FTXUI.git
           cd FTXUI
-          cmake -B build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=/usr \
-            -DCMAKE_INSTALL_LIBDIR=lib \
-            -DBUILD_SHARED_LIBS=OFF
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_SHARED_LIBS=OFF
           cmake --build build -j$(nproc)
           sudo cmake --install build
           cd ..
 
-      - name: Build
-        run: make
+      - name: Build static release
+        run: make release
+
+      - name: Strip binary
+        run: strip -s yt-grabber-tui
 
       - name: Create tar archive
-        run: |
-          mkdir libs
-          find /usr/lib -name 'libboost*.so*' -exec sudo cp {} libs/ \; 2>/dev/null || true
-          find /usr/lib -name 'libfmt.so*' -exec sudo cp {} libs/ \; 2>/dev/null || true
-          tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
+        run: tar -czvf yt-grabber-tui.tar.gz yt-grabber-tui
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: yt-grabber-tui-${{ github.ref_name }}
-          path: yt-grabber-tui.tar
+          name: yt-grabber-tui-glibc-x86_64-${{ github.ref_name }}
+          path: yt-grabber-tui.tar.gz
+
+  build-musl-x86_64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build in Alpine (musl x86_64)
+        run: |
+          docker run --rm -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
+            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake &&
+            git clone https://github.com/ArthurSonzogni/FTXUI.git &&
+            cd FTXUI &&
+            cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_SHARED_LIBS=OFF &&
+            cmake --build build -j$(nproc) &&
+            cmake --install build &&
+            cd .. &&
+            make &&
+            strip -s yt-grabber-tui &&
+            mkdir libs &&
+            cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libfmt.so* libs/ 2>/dev/null || true &&
+            tar -czvf yt-grabber-tui.tar.gz yt-grabber-tui libs/*
+          "
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-grabber-tui-musl-x86_64-${{ github.ref_name }}
+          path: yt-grabber-tui.tar.gz
+
+  build-musl-arm64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Build in Alpine (musl arm64)
+        run: |
+          docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
+            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake &&
+            git clone https://github.com/ArthurSonzogni/FTXUI.git &&
+            cd FTXUI &&
+            cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_SHARED_LIBS=OFF &&
+            cmake --build build -j$(nproc) &&
+            cmake --install build &&
+            cd .. &&
+            make &&
+            strip -s yt-grabber-tui &&
+            mkdir libs &&
+            cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libfmt.so* libs/ 2>/dev/null || true &&
+            tar -czvf yt-grabber-tui.tar.gz yt-grabber-tui libs/*
+          "
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-grabber-tui-musl-arm64-${{ github.ref_name }}
+          path: yt-grabber-tui.tar.gz
+
+  build-glibc-arm64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Build in Ubuntu ARM64 (glibc)
+        run: |
+          docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace ubuntu:22.04 /bin/bash -c "
+            apt-get update &&
+            apt-get install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev git cmake pkg-config &&
+            git clone https://github.com/ArthurSonzogni/FTXUI.git &&
+            cd FTXUI &&
+            cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_SHARED_LIBS=OFF &&
+            cmake --build build -j$(nproc) &&
+            cmake --install build &&
+            cd .. &&
+            make release &&
+            strip -s yt-grabber-tui &&
+            tar -czvf yt-grabber-tui.tar.gz yt-grabber-tui
+          "
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-grabber-tui-glibc-arm64-${{ github.ref_name }}
+          path: yt-grabber-tui.tar.gz

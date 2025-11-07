@@ -1,4 +1,4 @@
-name: Test and build
+name: Build Release
 
 on: push
 
@@ -15,11 +15,14 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential cmake \
             libboost-all-dev \
-            nlohmann-json3-dev \
             libfmt-dev \
             libspdlog-dev \
             git \
+            cmake \
             pkg-config
+
+      - name: Install FTXUI
+        run: |
           git clone https://github.com/ArthurSonzogni/FTXUI.git
           cd FTXUI
           cmake -B build \
