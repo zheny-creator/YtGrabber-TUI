@@ -27,7 +27,7 @@ jobs:
             cmake --build build -j$(nproc)
             cmake --install build
             cd ..
-            make
+            make alpine
             mkdir libs
           cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
           cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
@@ -67,7 +67,7 @@ jobs:
             cmake --build build -j$(nproc)
             cmake --install build
             cd ..
-            make
+            make alpine
             mkdir libs
             cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
             cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
@@ -109,17 +109,10 @@ jobs:
             cmake --install build
             cd ..
             make
-            mkdir libs
-            cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
-            cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
-            cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
-            cp /usr/lib/libboost_property_tree.so* libs/ 2>/dev/null || true &&
-            find /usr/lib /usr/lib/x86_64-linux-gnu -name "libfmt.so.*" -exec cp {} libs/ \;
-            tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: yt-grabber-tui-arm64-glibc-${{ github.ref_name }}
-          path: yt-grabber-tui.tar
+          path: yt-grabber-tui
