@@ -1,0 +1,57 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential \
+            libboost-all-dev \
+            libfmt-dev \
+            libspdlog-dev \
+            git \
+            cmake \
+            pkg-config
+
+      - name: Install FTXUI
+        run: |
+          git clone https://github.com/ArthurSonzogni/FTXUI.git
+          cd FTXUI
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            -DBUILD_SHARED_LIBS=OFF
+          cmake --build build -j$(nproc)
+          sudo cmake --install build
+          cd ..
+
+      - name: Build
+        run: make
+
+      - name: Create tar archive
+        run: |
+          mkdir libs
+          cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
+          cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
+          cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
+          cp /usr/lib/libboost_property_tree.so* libs/ 2>/dev/null || true &&
+          find /usr/lib /usr/lib/x86_64-linux-gnu -name "libfmt.so.*" -exec cp {} libs/ \;
+          tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-grabber-tui-${{ github.ref_name }}
+          path: yt-grabber-tui.tar
