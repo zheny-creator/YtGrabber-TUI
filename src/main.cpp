@@ -29,8 +29,8 @@ int main()
     int menu_quality_audio_for_video = 0;
     int quality_audio_for_video = 0;
     int menu_dowload_dir = 0;
-    fs::path path_to_ytdlp = bp::search_path("yt-dlp");  // for yt-dlp
-    fs::path path_to_ffmpeg = bp::search_path("ffmpeg"); // for ffmpeg
+    fs::path path_to_ytdlp = bp::environment::find_executable("yt‑dlp");;  // for yt-dlp
+    fs::path path_to_ffmpeg = bp::environment::find_executable("ffmpeg"); // for ffmpeg
     if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
     {
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found

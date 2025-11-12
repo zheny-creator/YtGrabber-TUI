@@ -3,6 +3,7 @@
 #include "Settings.hpp"
 #include <boost/process.hpp>    // for child
 #include <boost/filesystem.hpp> // for filesystem
+#include <boost/asio/io_context.hpp>
 #include <vector>
 #include <new>
 using namespace std;              // for string
@@ -24,7 +25,7 @@ public: // Public members
     void download(const string &url, int &quality, const pt::ptree &config) // Function download
     {
         string path_ffmpeg;
-        string yt_dlp_path = bp::search_path("yt-dlp").string();
+        string yt_dlp_path = bp::environment::find_executable("yt-dlp").string();
         vector<string> args; // Vector of arguments
         string video_format = config.get<string>("format video.format", "mp4");
         string sub_lang = config.get<string>("subtitles.language", "en");
@@ -119,15 +120,12 @@ public: // Public members
         for (const auto &a : args)
             cout << a << " ";
         cout << endl;
-        try
-        {
-            bp::child c(yt_dlp_path, bp::args(args)); // Run yt-dlp
-            c.wait();                                 // Wait for yt-dlp to finish
-        }
-        catch (const bp::process_error &e)
-        {
-            cerr << e.what() << "Ошибка запуска процесса!" << endl; // Handle process error
-        }
+        boost::asio::io_context ctx;
+        bp::process proc(ctx, yt_dlp_path, args);; // Run yt-dlp
+        proc.wait();                                       
+        int code = proc.exit_code();                       
+    
+    
     }
 };
 class audio
@@ -146,7 +144,7 @@ public:
     {
         vector<string> args; // Vector of arguments
         string path_ffmpeg;
-        string yt_dlp_path = bp::search_path("yt-dlp").string();
+        string yt_dlp_path = bp::environment::find_executable("yt-dlp").string();
         string audio_format;
         string sub_lang;
         if (quality > 256)
@@ -221,14 +219,9 @@ public:
         for (const auto &a : args)
             cout << a << " ";
         cout << endl;
-        try
-        {
-            bp::child c(yt_dlp_path, bp::args(args)); // Run yt-dlp
-            c.wait();                                 // Wait for yt-dlp to finish
-        }
-        catch (const bp::process_error &e)
-        {
-            cerr << e.what() << "Ошибка запуска процесса!" << endl; // Handle process error
-        }
+        boost::asio::io_context ctx;
+        bp::process proc(ctx, yt_dlp_path, args);; // Run yt-dlp
+        proc.wait();                                       
+        int code = proc.exit_code();                       
     }
 };
