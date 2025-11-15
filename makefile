@@ -7,12 +7,12 @@ LDFLAGS = -pthread
 BASE_LIBS = -lftxui-component -lftxui-dom -lftxui-screen
 
 LIBS_GLIBC = -Wl,-Bstatic \
-             -lboost_system -lboost_filesystem -lboost_thread \
+             -lboost_process -lboost_filesystem -lboost_thread \
              -lboost_program_options -lboost_regex \
              -Wl,-Bdynamic -lfmt \
              -Wl,-rpath,'$$ORIGIN/libs'
 
-LIBS_ALPINE = -lboost_system -lboost_filesystem -lboost_thread \
+LIBS_ALPINE = -lboost_process -lboost_filesystem -lboost_thread \
               -lboost_program_options -lboost_regex \
               -lfmt \
               -Wl,-rpath,'$$ORIGIN/libs'
