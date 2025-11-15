@@ -1,13 +1,14 @@
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <winsock2.h>
+#include <windows.h>
+#endif
 #include <iostream> // for cout
 #include <string>   // for string
 #include "Settings.hpp"
 #include <boost/process.hpp>    // for child
 #include <boost/filesystem.hpp> // for filesystem
 #include <boost/asio/io_context.hpp>
-#if defined(_WIN32)
-#include <winsock2.h>
-#include <windows.h>
-#endif
 #include <vector>
 #include <new>
 using namespace std;              // for string

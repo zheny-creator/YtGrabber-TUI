@@ -1,13 +1,14 @@
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <winsock2.h>
+#include <windows.h>
+#endif
 #include "yt-dlp.hpp" // for yt-dlp
 #define DEBUG true    // for debug
 #include <regex>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
-#if defined(_WIN32)
-#include <windows.h>
-#include <winsock2.h>
-#endif
 using namespace ftxui;
 
 int main()

@@ -1,3 +1,8 @@
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <winsock2.h>
+#include <windows.h>
+#endif
 #include <iostream>                            // for cout
 #include <string>                              // for string
 #include <boost/process.hpp>                   // for child
@@ -6,10 +11,6 @@
 #include <boost/property_tree/json_parser.hpp> // for json_parser
 #include <cstdlib>
 #include <cstdio>
-#if defined(_WIN32)
-#include <windows.h>
-#include <winsock2.h>
-#endif
 #define DEBUG true                   // for debug
 using namespace std;                 // for string
 namespace fs = boost::filesystem;    // for filesystem
