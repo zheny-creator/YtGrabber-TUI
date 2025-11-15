@@ -4,6 +4,9 @@
 #include <boost/process.hpp>    // for child
 #include <boost/filesystem.hpp> // for filesystem
 #include <boost/asio/io_context.hpp>
+#if defined(_WIN32)
+#include <winsock2.h>
+#endif
 #include <vector>
 #include <new>
 using namespace std;              // for string
