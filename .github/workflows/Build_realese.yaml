@@ -18,9 +18,9 @@ jobs:
           docker run --rm -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
             apk add --no-cache build-base git cmake wget
             cd /tmp
-            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0.tar.gz
-            tar xzf boost-1.89.0.tar.gz
-            cd boost-1.89.0
+            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost_1_89_0.tar.gz
+            tar xzf boost_1_89_0.tar.gz
+            cd boost_1_89_0
             ./bootstrap.sh --prefix=/usr
             ./b2 install -j\$(nproc) --with-system --with-filesystem --with-process --with-property_tree
             cd /workspace
@@ -67,9 +67,9 @@ jobs:
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
             apk add --no-cache build-base git cmake wget
             cd /tmp
-            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0.tar.gz
-            tar xzf boost-1.89.0.tar.gz
-            cd boost-1.89.0
+            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost_1_89_0.tar.gz
+            tar xzf boost_1_89_0.tar.gz
+            cd boost_1_89_0
             ./bootstrap.sh --prefix=/usr
             ./b2 install -j\$(nproc) --with-system --with-filesystem --with-process --with-property_tree
             cd /workspace
@@ -117,9 +117,9 @@ jobs:
             apt-get update
             apt-get install -y build-essential git cmake wget pkg-config libfmt-dev libspdlog-dev
             cd /tmp
-            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0.tar.gz
-            tar xzf boost-1.89.0.tar.gz
-            cd boost-1.89.0
+            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost_1_89_0.tar.gz
+            tar xzf boost_1_89_0.tar.gz
+            cd boost_1_89_0
             ./bootstrap.sh --prefix=/usr/local
             ./b2 install -j\$(nproc) --with-system --with-filesystem --with-process --with-property_tree
             cd /workspace
