@@ -68,7 +68,7 @@ jobs:
 
       - name: Build project
         run: |
-          make CXXFLAGS="--Wall -O2 -Iinclude -D_WIN32_WINNT=0x0602"
+          make CXXFLAGS="-Wall -O2 -Iinclude -D_WIN32_WINNT=0x0602"
 
       - name: Create distribution
         run: |
