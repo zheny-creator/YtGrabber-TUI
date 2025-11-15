@@ -17,6 +17,11 @@ LIBS_ALPINE = -lboost_system -lboost_filesystem -lboost_thread \
               -lfmt \
               -Wl,-rpath,'$$ORIGIN/libs'
 
+LIBS_GLIBC_DYNAMIC = -lboost_process -lboost_filesystem -lboost_thread \
+                     -lboost_program_options -lboost_regex \
+                     -lfmt \
+                     -Wl,-rpath,'$$ORIGIN/libs'
+
 SRC_DIR = src
 OBJ_DIR = obj
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
@@ -27,6 +32,9 @@ all: $(TARGET)
 alpine: LDFLAGS += $(LIBS_ALPINE)
 alpine: $(TARGET)-musl
 	@mv $(TARGET)-musl yt-grabber-tui
+
+dynamic: $(OBJS)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_GLIBC_DYNAMIC)
 
 $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(BASE_LIBS) $(LIBS_GLIBC)

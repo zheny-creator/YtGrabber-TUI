@@ -39,10 +39,9 @@ public: // Public members
         try
         {
             args = {
-                "-f", "\""
-                      "bestvideo[height<=" +
-                          to_string(quality) + "]" + "+" + "bestaudio"
-                                                           "\"",
+                "-f",
+                "bestvideo[height<=" +
+                    to_string(quality) + "]+" + bestaudio,
                 url};
         }
         catch (const bad_alloc &e)
@@ -100,32 +99,38 @@ public: // Public members
             {
                 sub_lang = config.get<string>("subtitles.language", "en");
                 args.insert(args.begin(), sub_lang);
-                args.insert(args.begin(), "--sub-lang ");
-                args.insert(args.begin(), "--embed-subs ");
-                args.insert(args.begin(), "--write-subs ");
+                args.insert(args.begin(), "--sub-lang");
+                args.insert(args.begin(), "--embed-subs");
+                args.insert(args.begin(), "--write-subs");
             }
             else if (config.get<string>("subtitles.enabled", "false") == "true")
             {
                 sub_lang = config.get<string>("subtitles.language", "en");
                 args.insert(args.begin(), sub_lang);
-                args.insert(args.begin(), "--sub-lang ");
-                args.insert(args.begin(), " --write-auto-subs ");
+                args.insert(args.begin(), "--sub-lang");
+                args.insert(args.begin(), "--write-auto-subs");
             }
         }
         if (config.get<string>("path to download video.enabled", "false") == "true")
         {
-            fs::current_path(dowload_dir);
+            try
+            {
+                fs::current_path(dowload_dir);
+            }
+            catch (const fs::filesystem_error &e)
+            {
+                cout << e.what() << "Ошибка смены директории" << endl;
+                return;
+            }
         }
         cout << "Выполняется команда: yt-dlp ";
         for (const auto &a : args)
             cout << a << " ";
         cout << endl;
         boost::asio::io_context ctx;
-        bp::process proc(ctx, yt_dlp_path, args);; // Run yt-dlp
-        proc.wait();                                       
-        int code = proc.exit_code();                       
-    
-    
+        bp::process proc(ctx, yt_dlp_path, args); // Run yt-dlp
+        proc.wait();
+        int code = proc.exit_code();
     }
 };
 class audio
@@ -220,8 +225,8 @@ public:
             cout << a << " ";
         cout << endl;
         boost::asio::io_context ctx;
-        bp::process proc(ctx, yt_dlp_path, args);; // Run yt-dlp
-        proc.wait();                                       
-        int code = proc.exit_code();                       
+        bp::process proc(ctx, yt_dlp_path, args);
+        proc.wait();
+        int code = proc.exit_code();
     }
 };

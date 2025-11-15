@@ -29,9 +29,10 @@ int main()
     int menu_quality_audio_for_video = 0;
     int quality_audio_for_video = 0;
     int menu_dowload_dir = 0;
-    fs::path path_to_ytdlp = bp::environment::find_executable("yt‑dlp");;  // for yt-dlp
+    fs::path path_to_ytdlp = bp::environment::find_executable("yt-dlp");  // for yt-dlp
     fs::path path_to_ffmpeg = bp::environment::find_executable("ffmpeg"); // for ffmpeg
-    if (!fs::exists(path_to_ytdlp))                      // examination of the existence of yt-dlp
+    fs::path path_to_javascript_engine = bp::environment::find_executable("nodejs");
+    if (!fs::exists(path_to_ytdlp)) // examination of the existence of yt-dlp
     {
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
         return 1;
@@ -41,6 +42,10 @@ int main()
         cout << "ffmpeg не найден" << endl; // if ffmpeg not found
         return 1;
     } // examination of the existence of ffmpeg
+    if (!fs::exists(path_to_javascript_engine))
+    {
+        cout << "nodejs не найден" << endl;
+    }
     fs::path config_dir;                    // for config_dir
     fs::path config_file;                   // for config_file
 #if defined(__linux__)                      // if linux
@@ -161,8 +166,8 @@ int main()
                     cout << "3. Расположение yt-dlp" << endl;
                     cout << "4. Превью видео" << endl;
                     cout << "5. Качество аудио" << endl;
-                    cout << "6. формат видео" << endl;
-                    cout << "7. формат аудио" << endl;
+                    cout << "6. Формат видео" << endl;
+                    cout << "7. Формат аудио" << endl;
                     cout << "8. Субтитры" << endl;
                     cout << "9. Качество аудио для видео" << endl;
                     cout << "10. Путь по умолчанию для скачивания видео" << endl;
@@ -852,49 +857,51 @@ int main()
                             cin.ignore();
                             if (menu_quality_audio_for_video == 1)
                             {
-                                if (config.get<string>("quality_audio_for_video", "false") == "false")
+                                if (config.get<string>("quality audio for video") == "false")
                                 {
-                                    config.put("quality_audio_for_video", "true");
+                                    config.put("quality audio for video", "true");
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
+                                        cout << "Качество включено" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
                                     {
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
-                                else if (config.get<string>("quality_audio_for_video", "false") == "true")
+                                else if (config.get<string>("quality audio for video", "false") == "true")
                                 {
                                     cout << "Качество уже включено" << endl;
                                 }
                             }
                             if (menu_quality_audio_for_video == 2)
                             {
-                                if (config.get<string>("quality_audio_for_video", "false") == "true")
+                                if (config.get<string>("quality audio for video", "false") == "true")
                                 {
-                                    config.put("quality_audio_for_video", "false");
+                                    config.put("quality audio for video", "false");
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
+                                        cout << "Качество выключено" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
                                     {
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
-                                else if (config.get<string>("quality_audio_for_video", "false") == "false")
+                                else if (config.get<string>("quality audio for video", "false") == "false")
                                 {
                                     cout << "Качество уже выключено" << endl;
                                 }
                             }
                             if (menu_quality_audio_for_video == 3)
                             {
-                                if (config.get<string>("quality_audio_for_video", "false") == "true")
+                                if (config.get<string>("quality audio for video", "false") == "true")
                                 {
                                     cout << "Введите качество: ";
                                     cin >> quality_audio_for_video;
-                                    config.put("quality_audio_for_video.quality", quality_audio_for_video);
+                                    config.put("quality audio for video", quality_audio_for_video);
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
@@ -904,6 +911,10 @@ int main()
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
+                            }
+                            if (menu_quality_audio_for_video == 4)
+                            {
+                                break;
                             }
                         }
                     }
@@ -951,6 +962,7 @@ int main()
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
+                                        cout << "Путь включен" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
                                     {
@@ -973,6 +985,7 @@ int main()
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
+                                        cout << "Путь выключен" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
                                     {
@@ -1003,6 +1016,10 @@ int main()
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
+                            }
+                            if (menu_dowload_dir == 4)
+                            {
+                                break;
                             }
                         }
                     }
