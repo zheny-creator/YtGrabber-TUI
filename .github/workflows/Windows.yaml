@@ -29,6 +29,8 @@ jobs:
             mingw-w64-ucrt-x86_64-spdlog
             mingw-w64-ucrt-x86_64-boost
             git
+            zip
+            make
 
       - name: Install FTXUI
         run: |
