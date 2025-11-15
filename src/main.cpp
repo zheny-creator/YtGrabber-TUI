@@ -4,6 +4,10 @@
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
+#if defined(_WIN32)
+#include <windows.h>
+#include <winsock2.h>
+#endif
 using namespace ftxui;
 
 int main()

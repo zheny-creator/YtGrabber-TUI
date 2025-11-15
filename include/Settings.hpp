@@ -8,6 +8,7 @@
 #include <cstdio>
 #if defined(_WIN32)
 #include <windows.h>
+#include <winsock2.h>
 #endif
 #define DEBUG true                   // for debug
 using namespace std;                 // for string
