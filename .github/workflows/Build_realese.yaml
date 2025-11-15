@@ -18,7 +18,7 @@ jobs:
           docker run --rm -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
             apk add --no-cache build-base git cmake wget
             cd /tmp
-            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost_1_89_0.tar.gz
+            wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
             tar xzf boost_1_89_0.tar.gz
             cd boost_1_89_0
             ./bootstrap.sh --prefix=/usr
@@ -67,7 +67,7 @@ jobs:
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
             apk add --no-cache build-base git cmake wget
             cd /tmp
-            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost_1_89_0.tar.gz
+            wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
             tar xzf boost_1_89_0.tar.gz
             cd boost_1_89_0
             ./bootstrap.sh --prefix=/usr
@@ -117,7 +117,7 @@ jobs:
             apt-get update
             apt-get install -y build-essential git cmake wget pkg-config libfmt-dev libspdlog-dev
             cd /tmp
-            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost_1_89_0.tar.gz
+            wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
             tar xzf boost_1_89_0.tar.gz
             cd boost_1_89_0
             ./bootstrap.sh --prefix=/usr/local
