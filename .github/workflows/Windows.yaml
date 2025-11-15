@@ -30,7 +30,6 @@ jobs:
             git
             wget
             zip
-            make
 
       - name: Install Boost 1.89
         run: |
@@ -38,7 +37,7 @@ jobs:
           wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
           tar xzf boost_1_89_0.tar.gz
           cd boost_1_89_0
-          ./bootstrap.sh --prefix=/ucrt64 gcc
+          ./bootstrap.sh --prefix=/ucrt64
           ./b2 toolset=gcc install -j$(nproc) \
             --with-system \
             --with-filesystem \
@@ -68,7 +67,7 @@ jobs:
 
       - name: Build project
         run: |
-          make CXXFLAGS="-Wall -O2 -Iinclude -D_WIN32_WINNT=0x0602"
+          make CXXFLAGS="-Iinclude -I/ucrt64/include -D_WIN32_WINNT=0x0602  -O2 -Iinclude"
 
       - name: Create distribution
         run: |
