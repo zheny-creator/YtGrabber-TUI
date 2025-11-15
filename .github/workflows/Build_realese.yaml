@@ -16,7 +16,16 @@ jobs:
       - name: Build in Alpine (musl x86_64)
         run: |
           docker run --rm -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
-            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake
+            apk add --no-cache build-base git cmake wget
+            cd /tmp
+            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0.tar.gz
+            tar xzf boost-1.89.0.tar.gz
+            cd boost-1.89.0
+            ./bootstrap.sh --prefix=/usr
+            ./b2 install -j\$(nproc) --with-system --with-filesystem --with-process --with-property_tree
+            cd /workspace
+            # Установка остальных зависимостей
+            apk add --no-cache fmt-dev spdlog-dev
             git clone https://github.com/ArthurSonzogni/FTXUI.git
             cd FTXUI
             cmake -B build \
@@ -24,17 +33,17 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=/usr \
               -DCMAKE_INSTALL_LIBDIR=lib \
               -DBUILD_SHARED_LIBS=OFF
-            cmake --build build -j$(nproc)
+            cmake --build build -j\$(nproc)
             cmake --install build
             cd ..
             make alpine
             mkdir libs
-          cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
-          cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
-          cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
-          cp /usr/lib/libboost_property_tree.so* libs/ 2>/dev/null || true &&
-          find /usr/lib /usr/lib/x86_64-linux-gnu -name "libfmt.so.*" -exec cp {} libs/ \;
-          tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
+            cp /usr/lib/libboost_process.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
+            cp /usr/lib/libboost_property_tree.so* libs/ 2>/dev/null || true &&
+            find /usr/lib /usr/lib/x86_64-linux-gnu -name 'libfmt.so.*' -exec cp {} libs/ \;
+            tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 
       - name: Upload binary
@@ -56,7 +65,16 @@ jobs:
       - name: Build in Alpine (musl arm64)
         run: |
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace alpine:latest /bin/sh -c "
-            apk add --no-cache build-base boost-dev fmt-dev spdlog-dev git cmake
+            apk add --no-cache build-base git cmake wget
+            cd /tmp
+            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0.tar.gz
+            tar xzf boost-1.89.0.tar.gz
+            cd boost-1.89.0
+            ./bootstrap.sh --prefix=/usr
+            ./b2 install -j\$(nproc) --with-system --with-filesystem --with-process --with-property_tree
+            cd /workspace
+            # Установка остальных зависимостей
+            apk add --no-cache fmt-dev spdlog-dev
             git clone https://github.com/ArthurSonzogni/FTXUI.git
             cd FTXUI
             cmake -B build \
@@ -64,7 +82,7 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=/usr \
               -DCMAKE_INSTALL_LIBDIR=lib \
               -DBUILD_SHARED_LIBS=OFF
-            cmake --build build -j$(nproc)
+            cmake --build build -j\$(nproc)
             cmake --install build
             cd ..
             make alpine
@@ -73,7 +91,7 @@ jobs:
             cp /usr/lib/libboost_filesystem.so* libs/ 2>/dev/null || true &&
             cp /usr/lib/libboost_system.so* libs/ 2>/dev/null || true &&
             cp /usr/lib/libboost_property_tree.so* libs/ 2>/dev/null || true &&
-            find /usr/lib /usr/lib/x86_64-linux-gnu -name "libfmt.so.*" -exec cp {} libs/ \;
+            find /usr/lib /usr/lib/x86_64-linux-gnu -name 'libfmt.so.*' -exec cp {} libs/ \;
             tar -cvf yt-grabber-tui.tar yt-grabber-tui libs/*
           "
 
@@ -97,7 +115,16 @@ jobs:
         run: |
           docker run --rm --platform linux/arm64 -v $(pwd):/workspace -w /workspace ubuntu:22.04 /bin/bash -c "
             apt-get update
-            apt-get install -y build-essential libboost-all-dev libfmt-dev libspdlog-dev git cmake pkg-config
+            apt-get install -y build-essential git cmake wget pkg-config libfmt-dev libspdlog-dev
+            cd /tmp
+            wget https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0.tar.gz
+            tar xzf boost-1.89.0.tar.gz
+            cd boost-1.89.0
+            ./bootstrap.sh --prefix=/usr/local
+            ./b2 install -j\$(nproc) --with-system --with-filesystem --with-process --with-property_tree
+            cd /workspace
+            ldconfig
+            # Установка FTXUI
             git clone https://github.com/ArthurSonzogni/FTXUI.git
             cd FTXUI
             cmake -B build \
@@ -105,7 +132,7 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=/usr \
               -DCMAKE_INSTALL_LIBDIR=lib \
               -DBUILD_SHARED_LIBS=OFF
-            cmake --build build -j$(nproc)
+            cmake --build build -j\$(nproc)
             cmake --install build
             cd ..
             make
