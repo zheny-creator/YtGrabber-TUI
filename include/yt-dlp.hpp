@@ -32,7 +32,7 @@ public: // Public members
         string bestaudio = "bestaudio";
         string bestaudio_quality = config.get<string>("quality_audio_for_video.quality", "128");
         fs::path dowload_dir = config.get<fs::path>("path to download video.path", "~/Downloads");
-        if (config.get<string>("quality_audio_for_video.enabled", "false") == "true")
+        if (config.get<string>("quality audio for video.enabled", "false") == "true")
         {
             bestaudio = "bestaudio[abr<= " + bestaudio_quality + "]";
         }

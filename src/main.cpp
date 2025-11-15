@@ -32,6 +32,7 @@ int main()
     fs::path path_to_ytdlp = bp::environment::find_executable("yt-dlp");  // for yt-dlp
     fs::path path_to_ffmpeg = bp::environment::find_executable("ffmpeg"); // for ffmpeg
     fs::path path_to_javascript_engine = bp::environment::find_executable("nodejs");
+    fs::path path_to_deno = bp::environment::find_executable("deno");
     if (!fs::exists(path_to_ytdlp)) // examination of the existence of yt-dlp
     {
         cout << "yt-dlp не найден" << endl; // if yt-dlp not found
@@ -42,9 +43,17 @@ int main()
         cout << "ffmpeg не найден" << endl; // if ffmpeg not found
         return 1;
     } // examination of the existence of ffmpeg
-    if (!fs::exists(path_to_javascript_engine))
+    if (!fs::exists(path_to_javascript_engine) && !fs::exists(path_to_deno))
     {
-        cout << "nodejs не найден" << endl;
+        cerr << "[ПРЕДУПРЕЖДЕНИЕ] JavaScript‑движок не найден (Node.js или Deno).\n"
+             << "Для корректного скачивания некоторых видео на YouTube может потребоваться JS‑движок.\n"
+             << "Рекомендуется установить Node.js или Deno для полной функциональности.\n";
+    }
+    if (getuid() == 0)
+    {
+        cerr << "[ПРЕДУПРЕЖДЕНИЕ] программа запущена с правами root/администратора.\n"
+             << "Использование root может быть небезопасным и привести к изменению системных файлов.\n"
+             << "Рекомендуется запускать yt-grabber-tui под обычным пользователем.\n";
     }
     fs::path config_dir;                    // for config_dir
     fs::path config_file;                   // for config_file
@@ -618,9 +627,10 @@ int main()
                             {
                                 if (config.get<string>("quality audio.enabled", "false") == "false")
                                 {
+                                    config.put("quality audio.enabled", "true");
                                     try
                                     {
-                                        config.put("quality audio.enabled", "true");
+                                        pt::write_json(config_file.string(), config);
                                         cout << "Качество аудио включено" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
@@ -637,9 +647,10 @@ int main()
                             {
                                 if (config.get<string>("quality audio.enabled", "false") == "true")
                                 {
+                                    config.put("quality audio.enabled", "false");
                                     try
                                     {
-                                        config.put("quality audio.enabled", "false");
+                                        pt::write_json(config_file.string(), config);
                                         cout << "Качество аудио выключено" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
@@ -662,6 +673,7 @@ int main()
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
+                                        cout << "Качество аудио изменено" << endl;
                                     }
                                     catch (const pt::json_parser::json_parser_error &e)
                                     {
@@ -857,9 +869,9 @@ int main()
                             cin.ignore();
                             if (menu_quality_audio_for_video == 1)
                             {
-                                if (config.get<string>("quality audio for video") == "false")
+                                if (config.get<string>("quality audio for video.enabled") == "false")
                                 {
-                                    config.put("quality audio for video", "true");
+                                    config.put("quality audio for video.enabled", "true");
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
@@ -870,16 +882,16 @@ int main()
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
-                                else if (config.get<string>("quality audio for video", "false") == "true")
+                                else if (config.get<string>("quality audio for video.enabled", "false") == "true")
                                 {
                                     cout << "Качество уже включено" << endl;
                                 }
                             }
                             if (menu_quality_audio_for_video == 2)
                             {
-                                if (config.get<string>("quality audio for video", "false") == "true")
+                                if (config.get<string>("quality audio for video.enabled", "false") == "true")
                                 {
-                                    config.put("quality audio for video", "false");
+                                    config.put("quality audio for video.enabled", "false");
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
@@ -890,18 +902,18 @@ int main()
                                         cout << e.what() << "Ошибка записи файла настроек" << endl;
                                     }
                                 }
-                                else if (config.get<string>("quality audio for video", "false") == "false")
+                                else if (config.get<string>("quality audio for video.enabled", "false") == "false")
                                 {
                                     cout << "Качество уже выключено" << endl;
                                 }
                             }
                             if (menu_quality_audio_for_video == 3)
                             {
-                                if (config.get<string>("quality audio for video", "false") == "true")
+                                if (config.get<string>("quality audio for video.enabled", "false") == "true")
                                 {
                                     cout << "Введите качество: ";
                                     cin >> quality_audio_for_video;
-                                    config.put("quality audio for video", quality_audio_for_video);
+                                    config.put("quality audio for video.quality", quality_audio_for_video);
                                     try
                                     {
                                         pt::write_json(config_file.string(), config);
