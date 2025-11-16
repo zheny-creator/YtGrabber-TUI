@@ -33,17 +33,15 @@ OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 all: $(TARGET)
 
-alpine: LDFLAGS += $(LIBS_ALPINE)
-alpine: $(TARGET)-musl
-	@mv $(TARGET)-musl yt-grabber-tui
+alpine: $(OBJS)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_ALPINE)
 
 dynamic: $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_GLIBC_DYNAMIC)
 
 windows: CXXFLAGS += -D_WIN32_WINNT=0x0602
-windows: LDFLAGS += $(LIBS_WINDOWS_DYNAMIC)
 windows: $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) -L/ucrt64/lib $(BASE_LIBS) $(LIBS_WINDOWS_DYNAMIC)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
@@ -53,4 +51,4 @@ $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_GLIBC)
 
 clean:
-	@rm -rf $(OBJ_DIR) $(TARGET) $(TARGET)-musl
+	@rm -rf $(OBJ_DIR) $(TARGET)
