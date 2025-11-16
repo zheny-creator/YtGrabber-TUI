@@ -46,7 +46,7 @@ jobs:
           cmake --install build
           cd ..
 
-      - name: Build project (Target: windows)
+      - name: Build project
         run: make windows
 
       - name: Create distribution (Include Boost DLLs)
