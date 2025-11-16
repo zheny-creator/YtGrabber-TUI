@@ -16,9 +16,9 @@ LIBS_ALPINE = -lboost_process -lboost_filesystem -lboost_thread \
               -lboost_program_options -lboost_regex \
               -lfmt \
               -Wl,-rpath,'$$ORIGIN/libs'
-              
+
 LIBS_WINDOWS_DYNAMIC = -lboost_process-mt -lboost_filesystem-mt -lboost_thread-mt \
-                       -lboost_program_options-mt -lboost_regex-mt \
+                       -lboost_program_options-mt -lboost_regex \
                        -lfmt
 
 LIBS_GLIBC_DYNAMIC = -lboost_process -lboost_filesystem -lboost_thread \
