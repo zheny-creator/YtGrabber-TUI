@@ -16,6 +16,10 @@ LIBS_ALPINE = -lboost_process -lboost_filesystem -lboost_thread \
               -lboost_program_options -lboost_regex \
               -lfmt \
               -Wl,-rpath,'$$ORIGIN/libs'
+              
+LIBS_WINDOWS_DYNAMIC = -lboost_process-mt -lboost_filesystem-mt -lboost_thread-mt \
+                       -lboost_program_options-mt -lboost_regex-mt \
+                       -lfmt
 
 LIBS_GLIBC_DYNAMIC = -lboost_process -lboost_filesystem -lboost_thread \
                      -lboost_program_options -lboost_regex \
@@ -36,16 +40,17 @@ alpine: $(TARGET)-musl
 dynamic: $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_GLIBC_DYNAMIC)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(BASE_LIBS) $(LIBS_GLIBC)
-
-$(TARGET)-musl: $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(BASE_LIBS) $(LIBS_ALPINE)
+windows: CXXFLAGS += -D_WIN32_WINNT=0x0602
+windows: LDFLAGS += $(LIBS_WINDOWS_DYNAMIC)
+windows: $(OBJS)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+$(TARGET): $(OBJS)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_GLIBC)
+
 clean:
-	rm -f $(TARGET) $(TARGET)-musl
-	rm -rf $(OBJ_DIR)
+	@rm -rf $(OBJ_DIR) $(TARGET) $(TARGET)-musl
