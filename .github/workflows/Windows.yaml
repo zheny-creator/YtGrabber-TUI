@@ -30,6 +30,7 @@ jobs:
             git
             wget
             zip
+            make
 
       - name: Install Boost 1.89 (Manual Static Build)
         run: |
