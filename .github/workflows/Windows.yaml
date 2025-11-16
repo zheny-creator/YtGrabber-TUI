@@ -30,7 +30,6 @@ jobs:
             mingw-w64-ucrt-x86_64-boost
             git
             zip
-            make
 
       - name: Install FTXUI
         run: |
@@ -46,6 +45,14 @@ jobs:
           cmake --install build
           cd ..
 
+      
+      - name: List Boost Libraries for Debugging
+        run: |
+          echo "--- Listing Boost Regex libraries in /ucrt64/lib ---"
+          ls -la /ucrt64/lib/libboost_regex*
+          echo "----------------------------------------------------"
+        continue-on-error: true
+
       - name: Build project
         run: make windows
 
@@ -54,7 +61,6 @@ jobs:
           mkdir -p dist
           cp yt-grabber-tui.exe dist/
           # Копируем runtime DLL из MSYS2
-          # Используем маски для libfmt, libspdlog и системных DLL
           cp /ucrt64/bin/libfmt*.dll dist/
           cp /ucrt64/bin/libspdlog*.dll dist/
           cp /ucrt64/bin/libgcc_s_seh-1.dll dist/
