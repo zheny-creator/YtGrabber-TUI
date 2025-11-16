@@ -30,6 +30,7 @@ jobs:
             git
             wget
             zip
+            make
 
       - name: Install Boost 1.89
         run: |
@@ -67,7 +68,7 @@ jobs:
 
       - name: Build project
         run: |
-          make CXXFLAGS="-Iinclude -I/ucrt64/include -D_WIN32_WINNT=0x0602  -O2 -Iinclude"
+          make CXXFLAGS="-Iinclude -I/ucrt64/include -D_WIN32_WINNT=0x0602  -O2 -Wall"
 
       - name: Create distribution
         run: |
