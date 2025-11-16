@@ -37,9 +37,8 @@ jobs:
           wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
           tar xzf boost_1_89_0.tar.gz
           cd boost_1_89_0
-          
-          
-          ./bootstrap.sh --prefix=/ucrt64 --with-toolset=mingw
+          export CXX=/ucrt64/bin/g++.exe
+          ./bootstrap.sh --prefix=/ucrt64
           ./b2 toolset=gcc install -j$(nproc) \
             --with-system \
             --with-filesystem \
@@ -50,7 +49,8 @@ jobs:
             --with-regex \
             link=static \
             runtime-link=shared \
-            variant=release
+            variant=release \
+            cxxflags="-std=c++17"
           cd -
 
       - name: Install FTXUI
