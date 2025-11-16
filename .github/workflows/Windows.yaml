@@ -30,7 +30,6 @@ jobs:
             git
             wget
             zip
-            make
 
       - name: Install Boost 1.89 (Manual Static Build)
         run: |
@@ -38,7 +37,9 @@ jobs:
           wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
           tar xzf boost_1_89_0.tar.gz
           cd boost_1_89_0
-          ./bootstrap.sh --prefix=/ucrt64 --cxx=/ucrt64/bin/g++.exe
+          
+          
+          ./bootstrap.sh --prefix=/ucrt64 --with-toolset=mingw
           ./b2 toolset=gcc install -j$(nproc) \
             --with-system \
             --with-filesystem \
