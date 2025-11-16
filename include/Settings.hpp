@@ -31,7 +31,6 @@ public:
 #endif
                 fs::path config_dir;
                 fs::path config_file;
-#if defined(__linux__)
                 const char *home = getenv("HOME");
                 config_dir = fs::path(home) / ".config" / "yt-grabber-tui";
                 try
@@ -43,9 +42,6 @@ public:
                         cerr << e.what() << "Ошибка создания директории" << std::endl;
                 }
                 config_file = config_dir / "config.json";
-#elif defined(_WIN32)
-                config_file = "config.json";
-#endif
 
                 pt::ptree quality_video;
                 quality_video.put("enabled", false);
@@ -111,10 +107,7 @@ public:
                 path_to_dowload_video.put("enabled", false);
                 path_to_dowload_video.put("path", "You path to download video");
                 config.add_child("path to download video", path_to_dowload_video);
-
-#if defined(__linux__)
                 fs::path temp_file;
-
                 string temp_template = (config_file.parent_path() / "tmpXXXXXX").string();
                 int fd = mkstemp(&temp_template[0]);
                 if (fd == -1)
@@ -125,43 +118,20 @@ public:
                 }
                 close(fd);
                 temp_file = temp_template;
-
                 pt::write_json(temp_file.string(), config);
-
                 fs::rename(temp_file, config_file);
-
 #if (DEBUG)
                 cout << "Файл настроек создан атомарно через mkstemp." << endl;
 #endif
-#elif defined(_WIN32)
-                fs::path temp_file;
-
-                string temp_template = (config_file.parent_path() / "tmpXXXXXX").string();
-                int fd = mkstemp(&temp_template[0]);
-                if (fd == -1)
-                {
-
-                        cerr << "Не удалось создать временный файл" << endl;
-                        return;
-                }
-                close(fd);
-                temp_file = temp_template;
-
-                pt::write_json(temp_file.string(), config);
-
-                fs::rename(temp_file, config_file);
 
 #if (DEBUG)
                 cout << "Файл настроек создан (Windows)." << endl;
-#endif
 #endif
         }
 
         void load_json_settings(pt::ptree &config)
         {
                 fs::path config_file;
-
-#if defined(__linux__)
                 const char *home = getenv("HOME");
                 config_file = fs::path(home) / ".config" / "yt-grabber-tui" / "config.json";
 
@@ -174,9 +144,6 @@ public:
 #endif
                 }
 
-#elif defined(_WIN32)
-                config_file = "config.json";
-
                 if (!fs::exists(config_file))
                         create_json_settings(config);
                 else
@@ -185,7 +152,6 @@ public:
                         cout << "Загрузка настроек..." << endl;
 #endif
                 }
-#endif
                 try
                 {
                         pt::read_json(config_file.string(), config);

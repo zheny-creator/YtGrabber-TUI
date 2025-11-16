@@ -1,8 +1,3 @@
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
-#include <windows.h>
-#endif
 #include "yt-dlp.hpp" // for yt-dlp
 #define DEBUG true    // for debug
 #include <regex>
@@ -54,9 +49,7 @@ int main()
              << "Для корректного скачивания некоторых видео на YouTube может потребоваться JS‑движок.\n"
              << "Рекомендуется установить Node.js или Deno для полной функциональности.\n";
     }
-#if defined(__linux__)
     if (getuid() == 0)
-#endif
     {
         cerr << "[ПРЕДУПРЕЖДЕНИЕ] программа запущена с правами root/администратора.\n"
              << "Использование root может быть небезопасным и привести к изменению системных файлов.\n"
@@ -64,7 +57,6 @@ int main()
     }
     fs::path config_dir;                    // for config_dir
     fs::path config_file;                   // for config_file
-#if defined(__linux__)                      // if linux
     const char *home = std::getenv("HOME"); // for home
     if (!home)                              // if home not found
     {
@@ -73,10 +65,6 @@ int main()
     }
     config_dir = fs::path(home) / ".config" / "yt-grabber-tui"; // config_dir
     config_file = config_dir / "config.json";                   // config_file
-
-#elif defined(_WIN32) // if windows
-    config_file = "config.json"; // config_file
-#endif
     settings_to_json json(config);
     json.load_json_settings(config);
     if (config.get<string>("New experemental menu.enabled", "false") == "true")
