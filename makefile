@@ -17,9 +17,11 @@ LIBS_ALPINE = -lboost_process -lboost_filesystem -lboost_thread \
               -lfmt \
               -Wl,-rpath,'$$ORIGIN/libs'
 
-LIBS_WINDOWS_DYNAMIC = -lboost_process-mt -lboost_filesystem-mt -lboost_thread-mt \
-                       -lboost_program_options-mt -lboost_regex \
-                       -lfmt
+LIBS_WINDOWS_STATIC = -L/ucrt64/lib \
+                      -Wl,-Bstatic \
+                      -lboost_system -lboost_process -lboost_filesystem -lboost_thread \
+                      -lboost_program_options -lboost_regex \
+                      -Wl,-Bdynamic -lfmt -lws2_32 -lgdi32
 
 LIBS_GLIBC_DYNAMIC = -lboost_process -lboost_filesystem -lboost_thread \
                      -lboost_program_options -lboost_regex \
@@ -39,9 +41,9 @@ alpine: $(OBJS)
 dynamic: $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_GLIBC_DYNAMIC)
 
-windows: CXXFLAGS += -D_WIN32_WINNT=0x0602
+windows: CXXFLAGS += -I/ucrt64/include -D_WIN32_WINNT=0x0602
 windows: $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) -L/ucrt64/lib $(BASE_LIBS) $(LIBS_WINDOWS_DYNAMIC)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET) $(BASE_LIBS) $(LIBS_WINDOWS_STATIC)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)

@@ -27,9 +27,30 @@ jobs:
             mingw-w64-ucrt-x86_64-make
             mingw-w64-ucrt-x86_64-fmt
             mingw-w64-ucrt-x86_64-spdlog
-            mingw-w64-ucrt-x86_64-boost
             git
+            wget
             zip
+            make
+
+      - name: Install Boost 1.89 (Manual Static Build)
+        run: |
+          cd /tmp
+          wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
+          tar xzf boost_1_89_0.tar.gz
+          cd boost_1_89_0
+          ./bootstrap.sh --prefix=/ucrt64 --cxx=/ucrt64/bin/g++.exe
+          ./b2 toolset=gcc install -j$(nproc) \
+            --with-system \
+            --with-filesystem \
+            --with-process \
+            --with-property_tree \
+            --with-thread \
+            --with-program_options \
+            --with-regex \
+            link=static \
+            runtime-link=shared \
+            variant=release
+          cd -
 
       - name: Install FTXUI
         run: |
@@ -45,32 +66,18 @@ jobs:
           cmake --install build
           cd ..
 
-      
-      - name: List Boost Libraries for Debugging
-        run: |
-          echo "--- Listing Boost Regex libraries in /ucrt64/lib ---"
-          ls -la /ucrt64/lib/libboost_regex*
-          echo "----------------------------------------------------"
-        continue-on-error: true
-
       - name: Build project
         run: make windows
 
-      - name: Create distribution (Include Boost DLLs)
+      - name: Create distribution
         run: |
           mkdir -p dist
           cp yt-grabber-tui.exe dist/
-          # Копируем runtime DLL из MSYS2
           cp /ucrt64/bin/libfmt*.dll dist/
           cp /ucrt64/bin/libspdlog*.dll dist/
           cp /ucrt64/bin/libgcc_s_seh-1.dll dist/
           cp /ucrt64/bin/libstdc++-6.dll dist/
           cp /ucrt64/bin/libwinpthread-1.dll dist/
-          cp /ucrt64/bin/libboost_process*.dll dist/ 2>/dev/null || true
-          cp /ucrt64/bin/libboost_filesystem*.dll dist/ 2>/dev/null || true
-          cp /ucrt64/bin/libboost_thread*.dll dist/ 2>/dev/null || true
-          cp /ucrt64/bin/libboost_program_options*.dll dist/ 2>/dev/null || true
-          cp /ucrt64/bin/libboost_regex*.dll dist/ 2>/dev/null || true
 
       - name: Create ZIP archive
         run: |
