@@ -33,16 +33,50 @@ int main()
     fs::path path_to_ffmpeg = bp::environment::find_executable("ffmpeg"); // for ffmpeg
     fs::path path_to_javascript_engine = bp::environment::find_executable("nodejs");
     fs::path path_to_deno = bp::environment::find_executable("deno");
-    if (!fs::exists(path_to_ytdlp)) // examination of the existence of yt-dlp
+    fs::path custom_path_to_ytdlp = config.get<string>("Custom Path to yt-dlp.path", "/");
+    fs::path custom_path_to_ffmpeg = config.get<string>("Custom Path to ffmpeg.path", "/");
+    if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "true")
     {
-        cout << "yt-dlp не найден" << endl; // if yt-dlp not found
-        return 1;
+        if (!fs::exists(custom_path_to_ffmpeg))
+        {
+            cerr << "Путь к ffmpeg указан неверно!" << endl;
+            return 1;
+        }
+        else if (fs::is_directory(custom_path_to_ffmpeg))
+        {
+            cerr << "Это путь к папке!" << endl;
+            return 1;
+        }
     }
-    if (!fs::exists(path_to_ffmpeg))
+    else if (config.get<string>("Custom Path to ffmpeg.enabled", "false") == "false")
     {
-        cout << "ffmpeg не найден" << endl; // if ffmpeg not found
-        return 1;
-    } // examination of the existence of ffmpeg
+        if (!fs::exists(path_to_ffmpeg))
+        {
+            cout << "ffmpeg не найден" << endl; // if ffmpeg not found
+            return 1;
+        } // examination of the existence of ffmpeg
+    }
+    if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "true")
+    {
+        if (!fs::exists(custom_path_to_ytdlp))
+        {
+            cerr << "Путь к yt-dlp указан неверно!" << endl;
+            return 1;
+        }
+        else if (fs::is_directory(custom_path_to_ytdlp))
+        {
+            cerr << "Это путь к папке!" << endl;
+            return 1;
+        }
+    }
+    else if (config.get<string>("Custom Path to yt-dlp.enabled", "false") == "false")
+    {
+        if (!fs::exists(path_to_ytdlp)) // examination of the existence of yt-dlp
+        {
+            cout << "yt-dlp не найден" << endl; // if yt-dlp not found
+            return 1;
+        }
+    }
     if (!fs::exists(path_to_javascript_engine) && !fs::exists(path_to_deno))
     {
         cerr << "[ПРЕДУПРЕЖДЕНИЕ] JavaScript‑движок не найден (Node.js или Deno).\n"
