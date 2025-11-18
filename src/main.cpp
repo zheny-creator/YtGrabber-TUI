@@ -578,6 +578,13 @@ int main()
                             cout << "4. Назад" << endl;
                             cout << "Выберите действие: ";
                             cin >> choice_menu_format_audio;
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
                             cin.ignore();
                             if (choice_menu_format_audio == 1)
                             {
@@ -651,6 +658,13 @@ int main()
                             cout << "4. Назад" << endl;
                             cout << "Выберите действие: ";
                             cin >> menu_quality_audio;
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
                             cin.ignore();
                             if (menu_quality_audio == 1)
                             {
@@ -726,6 +740,13 @@ int main()
                             cout << "4. Назад" << endl;
                             cout << "Выберите действие: ";
                             cin >> menu_quality_video;
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
                             cin.ignore();
                             if (menu_quality_video == 1)
                             {
@@ -801,6 +822,13 @@ int main()
                             cout << "5. Назад" << endl;
                             cout << "Выберите действие: ";
                             cin >> subtitles_menu;
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
                             cin.ignore();
                             if (subtitles_menu == 1)
                             {
@@ -895,6 +923,13 @@ int main()
                             cout << "4. Назад" << endl;
                             cout << "Выберите действие: ";
                             cin >> menu_quality_audio_for_video;
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
                             cin.ignore();
                             if (menu_quality_audio_for_video == 1)
                             {
@@ -969,6 +1004,21 @@ int main()
                                 cout << "2. Назад" << endl;
                                 cout << "Выберите действие: ";
                                 cin >> menu_experemental;
+                                if (cin.fail())
+                                {
+                                    cin.clear();
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                    cout << "Ошибка ввода! Введите число.\n";
+                                    continue;
+                                }
+                                cin.ignore();
+                                if (cin.fail())
+                                {
+                                    cin.clear();
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                    cout << "Ошибка ввода! Введите число.\n";
+                                    continue;
+                                }
                                 cin.ignore();
                                 if (menu_experemental == 1)
                                 {
@@ -995,6 +1045,14 @@ int main()
                             cout << "4. Назад" << endl;
                             cout << "Выберите действие: ";
                             cin >> menu_dowload_dir;
+                            if (cin.fail())
+                            {
+                                cin.clear();
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                cout << "Ошибка ввода! Введите число.\n";
+                                continue;
+                            }
+                            cin.ignore();
                             if (menu_dowload_dir == 1)
                             {
                                 if (config.get<string>("path to download video.enabled", "false") == "false")
