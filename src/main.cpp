@@ -1152,6 +1152,11 @@ int main()
             {
                 break;
             }
+            if (choice == 9)
+            {
+                cout << "Katze is baka!";
+                continue;
+            }
         }
     }
 }
