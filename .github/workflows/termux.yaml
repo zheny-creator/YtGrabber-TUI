@@ -1,0 +1,34 @@
+name: Build Termux (aarch64)
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-termux:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Build in Termux Docker
+        run: |
+          docker run --rm -v $PWD:/workspace -w /workspace --platform linux/arm64 termux/termux-docker:aarch64 bash -c '
+            set -e
+            pkg update -y && pkg upgrade -y
+            pkg install -y build-essential git cmake pkg-config fmt spdlog boost-static libftxui
+            export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
+            make
+            mv yt-grabber-tui yt-grabber-tui-aarch64
+          '
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: yt-grabber-tui-termux-${{ github.ref_name }}
+          path: yt-grabber-tui-aarch64
