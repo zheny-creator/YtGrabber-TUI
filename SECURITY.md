@@ -2,7 +2,7 @@
 
 ## Project Status
 
-**YtGrabber-TUI** is currently in **Stable verison 1.0**.  
+**YtGrabber-TUI** is currently in **Stable verison 1.1**.  
 Security updates are provided as part of active development, but the software may still contain experimental or unstable components.
 
 ---
@@ -11,7 +11,7 @@ Security updates are provided as part of active development, but the software ma
 
 | Version | Supported          |
 | -------- | ------------------ |
-| Stable 1.0    | :white_check_mark: |
+| Stable 1.1    | :white_check_mark: |
 
 Only the current beta branch receives fixes and improvements.
 

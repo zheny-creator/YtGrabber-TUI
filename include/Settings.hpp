@@ -95,7 +95,7 @@ public:
 
                 pt::ptree new_experemental_menu;
 
-                new_experemental_menu.put("enabled", true);
+                new_experemental_menu.put("enabled", false);
                 config.add_child("New experemental menu", new_experemental_menu);
 
                 pt::ptree path_to_dowload_video;
