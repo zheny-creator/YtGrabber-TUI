@@ -1033,7 +1033,7 @@ int main()
                                         try
                                         {
                                             pt::write_json(config_file.string(), config);
-                                            cout << "Новое меню включено" << endl;
+                                            cout << "Новое меню выключено" << endl;
                                         }
                                         catch (const pt::json_parser::json_parser_error &e)
                                         {
