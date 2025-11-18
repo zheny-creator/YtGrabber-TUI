@@ -1012,17 +1012,34 @@ int main()
                                     continue;
                                 }
                                 cin.ignore();
-                                if (cin.fail())
-                                {
-                                    cin.clear();
-                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                                    cout << "Ошибка ввода! Введите число.\n";
-                                    continue;
-                                }
-                                cin.ignore();
                                 if (menu_experemental == 1)
                                 {
-                                    cout << "Новое меню будет доступно с 1.1 Alpha 2" << endl;
+                                    if (config.get<string>("New experemental menu.enabled", "false") == "false")
+                                    {
+                                        config.put("New experemental menu.enabled", "true");
+                                        try
+                                        {
+                                            pt::write_json(config_file.string(), config);
+                                            cout << "Новое меню включено" << endl;
+                                        }
+                                        catch (const pt::json_parser::json_parser_error &e)
+                                        {
+                                            cout << "Ошибка записи файла настроек" << endl;
+                                        }
+                                    }
+                                    else if (config.get<string>("New experemental menu.enabled", "false") == "true")
+                                    {
+                                        config.put("New experemental menu.enabled", "false");
+                                        try
+                                        {
+                                            pt::write_json(config_file.string(), config);
+                                            cout << "Новое меню включено" << endl;
+                                        }
+                                        catch (const pt::json_parser::json_parser_error &e)
+                                        {
+                                            cout << "Ошибка записи файла настроек" << endl;
+                                        }
+                                    }
                                 }
                                 if (menu_experemental == 2)
                                 {
