@@ -51,9 +51,9 @@ parts:
     stage-packages:
       - libspdlog1.12
     override-build: |
-      export CPATH="$CRAFT_STAGE/usr/include:${CPATH:-}"
-      export LIBRARY_PATH="$CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu:${LIBRARY_PATH:-}"
-      export PKG_CONFIG_PATH="$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH:-}"
+      export CPATH="$CRAFT_PART_INSTALL/usr/include:$CRAFT_STAGE/usr/include:${CPATH:-}"
+      export LIBRARY_PATH="$CRAFT_PART_INSTALL/usr/lib:$CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu:$CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu:${LIBRARY_PATH:-}"
+      export PKG_CONFIG_PATH="$CRAFT_PART_INSTALL/usr/lib/pkgconfig:$CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/pkgconfig:$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH:-}"
       make -j$(nproc)
       mkdir -p $CRAFT_PART_INSTALL/bin
       cp yt-grabber-tui $CRAFT_PART_INSTALL/bin/
