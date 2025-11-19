@@ -1,4 +1,4 @@
-name: Build and Release Snap
+name: Build Snap
 
 on:
   push:
@@ -14,12 +14,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Snap
+      - name: Install snapcraft
+        run: sudo snap install snapcraft --classic
+
+      - name: Build Snap package
         uses: snapcore/action-build@v1
         id: build
 
-      - name: Upload Snap artifact
+      - name: Upload .snap as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: yt-grabber-tui-snap-${{ github.ref_name }}
-          path: '*.snap'
+          name: yt-grabber-tui_${{ github.ref_name }}_amd64.snap
+          path: "*.snap"
+          if-no-files-found: error
