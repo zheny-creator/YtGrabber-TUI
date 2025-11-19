@@ -1,0 +1,52 @@
+name: yt-grabber-tui
+version: '1.1-rc'
+summary: TUI утилита для скачивания видео и аудио с YouTube
+description: |
+  Yt-grabber-tui — лёгкая TUI-утилита.
+base: core24
+confinement: classic
+grade: stable
+
+apps:
+  yt-grabber-tui:
+    command: bin/yt-grabber-tui
+    environment:
+      LD_LIBRARY_PATH: $SNAP/libs:$LD_LIBRARY_PATH
+
+parts:
+  boost:
+    plugin: nil
+    source: https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download
+    source-type: tar
+    build-packages: [build-essential, wget]
+    override-build: |
+      ./bootstrap.sh --prefix=/usr
+      ./b2 install -j$(nproc) --prefix=$CRAFT_PART_INSTALL/usr --with-system --with-filesystem --with-process --with-property_tree --with-thread --with-program_options --with-regex
+
+  ftxui:
+    plugin: cmake
+    source: https://github.com/ArthurSonzogni/FTXUI.git
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DBUILD_SHARED_LIBS=OFF
+    build-packages: [build-essential, cmake]
+
+  yt-grabber-tui:
+    plugin: make
+    source: .
+    after: [boost, ftxui]
+    build-packages:
+      - pkg-config
+      - libfmt-dev
+      - libspdlog-dev
+    stage-packages:
+      - libspdlog1.12
+    override-build: |
+      export CPATH=$CRAFT_STAGE/usr/include:$CPATH
+      export LIBRARY_PATH=$CRAFT_STAGE/usr/lib:$LIBRARY_PATH
+      make
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      mkdir -p $CRAFT_PART_INSTALL/libs
+      cp yt-grabber-tui $CRAFT_PART_INSTALL/bin/
+      cp /usr/lib/x86_64-linux-gnu/libfmt.so* $CRAFT_PART_INSTALL/libs/
