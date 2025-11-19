@@ -51,9 +51,9 @@ parts:
     stage-packages:
       - libspdlog1.12
     override-build: |
-      export CPATH="$CRAFT_PARTS_ROOT/boost/install/usr/include:$CRAFT_PARTS_ROOT/ftxui/install/usr/include:$CRAFT_STAGE/usr/include:${CPATH:-}"
-      export LIBRARY_PATH="$CRAFT_PARTS_ROOT/boost/install/usr/lib:$CRAFT_PARTS_ROOT/ftxui/install/usr/lib:$CRAFT_PARTS_ROOT/boost/install/usr/lib/x86_64-linux-gnu:$CRAFT_PARTS_ROOT/ftxui/install/usr/lib/x86_64-linux-gnu:$CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu:${LIBRARY_PATH:-}"
-      export PKG_CONFIG_PATH="$CRAFT_PARTS_ROOT/boost/install/usr/lib/pkgconfig:$CRAFT_PARTS_ROOT/ftxui/install/usr/lib/pkgconfig:$CRAFT_PARTS_ROOT/boost/install/usr/lib/x86_64-linux-gnu/pkgconfig:$CRAFT_PARTS_ROOT/ftxui/install/usr/lib/x86_64-linux-gnu/pkgconfig:$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH:-}"
+      export CPATH="/root/parts/boost/install/usr/include:/root/parts/ftxui/install/usr/include:$CRAFT_STAGE/usr/include:${CPATH:-}"
+      export LIBRARY_PATH="/root/parts/boost/install/usr/lib:/root/parts/ftxui/install/usr/lib:/root/parts/boost/install/usr/lib/x86_64-linux-gnu:/root/parts/ftxui/install/usr/lib/x86_64-linux-gnu:$CRAFT_STAGE/usr/lib:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu:${LIBRARY_PATH:-}"
+      export PKG_CONFIG_PATH="/root/parts/boost/install/usr/lib/pkgconfig:/root/parts/ftxui/install/usr/lib/pkgconfig:/root/parts/boost/install/usr/lib/x86_64-linux-gnu/pkgconfig:/root/parts/ftxui/install/usr/lib/x86_64-linux-gnu/pkgconfig:$CRAFT_STAGE/usr/lib/pkgconfig:$CRAFT_STAGE/usr/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH:-}"
       make -j$(nproc)
       mkdir -p $CRAFT_PART_INSTALL/bin
       cp yt-grabber-tui $CRAFT_PART_INSTALL/bin/
