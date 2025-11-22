@@ -19,7 +19,10 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake git pkg-config \
-            libfmt-dev libspdlog-dev wget
+            libfmt-dev libspdlog-dev wget lxd
+
+      - name: Add user to lxd group (fix snapcraft LXD error)
+        run: sudo adduser $USER lxd
 
       - name: Install Boost 1.89
         run: |
@@ -63,7 +66,7 @@ jobs:
 
       - name: Install snapcraft
         run: |
-          sudo snap install snapcraft --classic
+          sudo snap install snapcraft --classic --channel=latest/stable
 
       - name: Pack snap
         run: |
