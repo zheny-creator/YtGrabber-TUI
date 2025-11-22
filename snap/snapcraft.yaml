@@ -1,11 +1,11 @@
 name: yt-grabber-tui
+base: core24
+confinement: classic
+grade: stable
 version: '1.1-rc'
 summary: "TUI утилита для скачивания видео и аудио"
 description: |
   Yt-grabber-tui — легкая TUI утилита на основе FTXUI.
-base: core24
-confinement: classic
-grade: stable
 
 apps:
   yt-grabber-tui:
@@ -16,6 +16,10 @@ apps:
       - network
       - network-bind
       - removable-media
+
+hooks:
+  post-refresh:
+    command: usr/bin/snapcraft-preload --add-user-group $SNAP_USER_COMMON lxd
 
 parts:
   yt-grabber-tui:
