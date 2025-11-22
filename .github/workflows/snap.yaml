@@ -19,7 +19,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake git pkg-config \
-            libfmt-dev libspdlog-dev wget snapd
+            libfmt-dev libspdlog-dev wget
 
       - name: Add user to lxd group (fix snapcraft LXD error)
         run: sudo usermod -aG lxd $USER
@@ -50,32 +50,16 @@ jobs:
         run: |
           make -j$(nproc)
 
-      - name: Prepare snap files
-        run: |
-          mkdir -p snap/bin snap/libs
-          cp yt-grabber-tui snap/bin/
-          FMTPATH=$(ldconfig -p | grep libfmt | head -n1 | awk '{print $NF}' || true)
-          if [ -n "$FMTPATH" ] && [ -f "$FMTPATH" ]; then
-            cp "$FMTPATH" snap/libs/
-          else
-            FMTF=$(find /usr -type f -name 'libfmt*.so*' 2>/dev/null | head -n1 || true)
-            if [ -n "$FMTF" ]; then
-              cp "$FMTF" snap/libs/
-            fi
-          fi
-
       - name: Install snapcraft
         run: |
           sudo snap install snapcraft --classic --channel=latest/stable
 
       - name: Pack snap
         run: |
-          cd snap
           snapcraft pack
-          cd ..
 
       - name: Upload .snap artifact
         uses: actions/upload-artifact@v4
         with:
           name: yt-grabber-tui.snap
-          path: snap/*.snap
+          path: yt-grabber-tui_*.snap

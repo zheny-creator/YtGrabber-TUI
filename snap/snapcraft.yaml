@@ -16,15 +16,13 @@ apps:
       - network
       - network-bind
       - removable-media
-
-hooks:
-  post-refresh:
-    command: usr/bin/snapcraft-preload --add-user-group $SNAP_USER_COMMON lxd
+      - home
+      - desktop
 
 parts:
   yt-grabber-tui:
     plugin: dump
     source: .
     organize:
-      bin/yt-grabber-tui: bin/yt-grabber-tui
-      libs/*: libs/
+      yt-grabber-tui: bin/yt-grabber-tui
+      libfmt*.so*: libs/
