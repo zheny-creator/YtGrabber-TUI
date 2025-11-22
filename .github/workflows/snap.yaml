@@ -21,8 +21,17 @@ jobs:
           sudo apt install -y build-essential cmake git pkg-config \
             libfmt-dev libspdlog-dev wget
 
-      - name: Add user to lxd group (fix snapcraft LXD error)
-        run: sudo usermod -aG lxd $USER
+      - name: Install snapcraft (classic)
+        run: sudo snap install snapcraft --classic
+
+      - name: Fix LXD group (required by snapcraft on GitHub Actions)
+        run: |
+          sudo usermod -aG lxd $USER
+          # GitHub Actions сразу видит новую группу только после нового логина
+          # поэтому используем newgrp, чтобы изменения применились в текущей сессии
+          exec sg lxd newgrp <<EOF
+          echo "Now running as member of lxd group"
+          EOF
 
       - name: Install Boost 1.89
         run: |
@@ -47,16 +56,10 @@ jobs:
           sudo cmake --install build
 
       - name: Build project
-        run: |
-          make -j$(nproc)
-
-      - name: Install snapcraft
-        run: |
-          sudo snap install snapcraft --classic --channel=latest/stable
+        run: make -j$(nproc)
 
       - name: Pack snap
-        run: |
-          snapcraft pack
+        run: snapcraft pack
 
       - name: Upload .snap artifact
         uses: actions/upload-artifact@v4
