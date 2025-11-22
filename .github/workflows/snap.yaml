@@ -27,11 +27,7 @@ jobs:
       - name: Fix LXD group (required by snapcraft on GitHub Actions)
         run: |
           sudo usermod -aG lxd $USER
-          # GitHub Actions сразу видит новую группу только после нового логина
-          # поэтому используем newgrp, чтобы изменения применились в текущей сессии
-          exec sg lxd newgrp <<EOF
-          echo "Now running as member of lxd group"
-          EOF
+          newgrp lxd
 
       - name: Install Boost 1.89
         run: |
@@ -59,7 +55,7 @@ jobs:
         run: make -j$(nproc)
 
       - name: Pack snap
-        run: snapcraft pack
+        run: sg lxd -c "snapcraft pack"
 
       - name: Upload .snap artifact
         uses: actions/upload-artifact@v4
