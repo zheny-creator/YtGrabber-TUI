@@ -1,63 +1,28 @@
 name: yt-grabber-tui
 version: '1.1-rc'
-summary: TUI утилита для скачивания видео и аудио с YouTube
+summary: TUI утилита для скачивания видео и аудио
 description: |
-  Yt-grabber-tui — текстовая утилита на основе FTXUI для скачивания
-  видео и аудио с YouTube и других сайтов.
+Yt-grabber-tui — легкая TUI утилита на основе FTXUI.
 base: core24
 confinement: classic
 grade: stable
 
+
 apps:
-  yt-grabber-tui:
-    command: bin/yt-grabber-tui
-    plugs: [network, network-bind, removable-media]
+yt-grabber-tui:
+command: bin/yt-grabber-tui
+environment:
+LD_LIBRARY_PATH: $SNAP/libs
+plugs:
+- network
+- network-bind
+- removable-media
+
 
 parts:
-  boost:
-    plugin: nil
-    source: https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download
-    source-type: tar
-    build-packages:
-      - build-essential
-      - wget
-      - python3
-    override-build: |
-      ./bootstrap.sh --prefix=$CRAFT_PART_INSTALL/usr
-      ./b2 -j$(nproc) \
-        --with-system \
-        --with-filesystem \
-        --with-program_options \
-        --with-regex \
-        --with-thread \
-        install
-
-  ftxui:
-    plugin: cmake
-    source: https://github.com/ArthurSonzogni/FTXUI.git
-    cmake-parameters:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL/usr
-      - -DBUILD_SHARED_LIBS=OFF
-      - -DFT_ENABLE_TEST=OFF
-    build-packages:
-      - build-essential
-      - cmake
-
-  yt-grabber-tui:
-    plugin: make
-    source: .
-    after: [boost, ftxui]
-    build-packages:
-      - build-essential
-      - pkg-config
-      - libfmt-dev
-      - libspdlog-dev
-    stage-packages:
-      - libspdlog1.12
-    override-build: |
-      export CPATH="$CRAFT_PART_INSTALL/usr/include"
-      export LIBRARY_PATH="$CRAFT_PART_INSTALL/usr/lib:$CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu"
-      export PKG_CONFIG_PATH="$CRAFT_PART_INSTALL/usr/lib/pkgconfig:$CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/pkgconfig"
-      make -j$(nproc)
-      install -Dm755 yt-grabber-tui $CRAFT_PART_INSTALL/bin/yt-grabber-tui
+yt-grabber-tui:
+plugin: dump
+source: .
+organize:
+bin/yt-grabber-tui: bin/yt-grabber-tui
+libs/*: libs/

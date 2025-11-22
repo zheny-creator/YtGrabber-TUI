@@ -1,29 +1,78 @@
-name: Build Snap
-
+name: Build, Pack and Upload Snap
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main", "dev" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake git pkg-config \
+            libfmt-dev libspdlog-dev wget
+
+      - name: Install Boost 1.89
+        run: |
+          cd /tmp
+          wget -O boost_1_89_0.tar.gz "https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download"
+          tar xzf boost_1_89_0.tar.gz
+          cd boost_1_89_0
+          ./bootstrap.sh --prefix=/usr/local
+          sudo ./b2 install -j$(nproc) --with-system --with-filesystem --with-process --with-property_tree --with-thread --with-program_options --with-regex
+          sudo ldconfig
+
+      - name: Install FTXUI
+        run: |
+          git clone https://github.com/ArthurSonzogni/FTXUI.git
+          cd FTXUI
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            -DBUILD_SHARED_LIBS=OFF
+          cmake --build build -j$(nproc)
+          sudo cmake --install build
+
+      - name: Build project
+        run: |
+          make -j$(nproc)
+
+      - name: Prepare snap files
+        run: |
+          mkdir -p snap/bin snap/libs
+          cp yt-grabber-tui snap/bin/
+          FMTPATH=$(ldconfig -p | grep libfmt | head -n1 | awk '{print $NF}' || true)
+          if [ -n "$FMTPATH" ] && [ -f "$FMTPATH" ]; then
+            cp "$FMTPATH" snap/libs/
+          else
+            FMTF=$(find /usr -type f -name 'libfmt*.so*' 2>/dev/null | head -n1 || true)
+            if [ -n "$FMTF" ]; then
+              cp "$FMTF" snap/libs/
+            fi
+          fi
+
       - name: Install snapcraft
-        run: sudo snap install snapcraft --classic
+        run: |
+          sudo snap install snapcraft --classic
 
-      - name: Build Snap package
-        uses: snapcore/action-build@v1
-        id: build
+      - name: Pack snap
+        run: |
+          cd snap
+          snapcraft pack
+          cd ..
 
-      - name: Upload .snap as artifact
+      - name: Upload .snap artifact
         uses: actions/upload-artifact@v4
         with:
-          name: yt-grabber-tui_${{ github.ref_name }}_amd64.snap
-          path: "*.snap"
-          if-no-files-found: error
+          name: yt-grabber-tui.snap
+          path: snap/*.snap
