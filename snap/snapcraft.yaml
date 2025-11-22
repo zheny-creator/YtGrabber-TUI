@@ -1,43 +1,63 @@
 name: yt-grabber-tui
-version: "1.1-rc"
-summary: yt-grabber-tui
-description: yt-grabber-tui
+version: '1.1-rc'
+summary: TUI утилита для скачивания видео и аудио с YouTube
+description: |
+  Yt-grabber-tui — текстовая утилита на основе FTXUI для скачивания
+  видео и аудио с YouTube и других сайтов.
 base: core24
-confinement: strict
+confinement: classic
 grade: stable
-platforms:
-  amd64:
-    build-on: amd64
-    build-for: amd64
+
 apps:
   yt-grabber-tui:
     command: bin/yt-grabber-tui
+    plugs: [network, network-bind, removable-media]
+
 parts:
+  boost:
+    plugin: nil
+    source: https://sourceforge.net/projects/boost/files/boost/1.89.0/boost_1_89_0.tar.gz/download
+    source-type: tar
+    build-packages:
+      - build-essential
+      - wget
+      - python3
+    override-build: |
+      ./bootstrap.sh --prefix=$CRAFT_PART_INSTALL/usr
+      ./b2 -j$(nproc) \
+        --with-system \
+        --with-filesystem \
+        --with-program_options \
+        --with-regex \
+        --with-thread \
+        install
+
   ftxui:
     plugin: cmake
     source: https://github.com/ArthurSonzogni/FTXUI.git
     cmake-parameters:
-      - -DCMAKE_INSTALL_PREFIX=/usr
-  boost:
-    plugin: nil
-    source: https://github.com/boostorg/boost.git
-    source-depth: 1
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL/usr
+      - -DBUILD_SHARED_LIBS=OFF
+      - -DFT_ENABLE_TEST=OFF
     build-packages:
-      - g++
-      - make
-      - python3
-    override-build: |
-      ./bootstrap.sh
-      ./b2 install --prefix="$SNAPCRAFT_PART_INSTALL/usr"
+      - build-essential
+      - cmake
+
   yt-grabber-tui:
     plugin: make
     source: .
+    after: [boost, ftxui]
     build-packages:
-      - g++
-      - make
+      - build-essential
+      - pkg-config
+      - libfmt-dev
+      - libspdlog-dev
+    stage-packages:
+      - libspdlog1.12
     override-build: |
-      export CPATH="$SNAPCRAFT_STAGE/usr/include:$SNAPCRAFT_PART_INSTALL/usr/include"
-      export LIBRARY_PATH="$SNAPCRAFT_STAGE/usr/lib:$SNAPCRAFT_STAGE/usr/lib/x86_64-linux-gnu:$SNAPCRAFT_PART_INSTALL/usr/lib"
-      export PKG_CONFIG_PATH="$SNAPCRAFT_STAGE/usr/lib/pkgconfig:$SNAPCRAFT_PART_INSTALL/usr/lib/pkgconfig"
+      export CPATH="$CRAFT_PART_INSTALL/usr/include"
+      export LIBRARY_PATH="$CRAFT_PART_INSTALL/usr/lib:$CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu"
+      export PKG_CONFIG_PATH="$CRAFT_PART_INSTALL/usr/lib/pkgconfig:$CRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/pkgconfig"
       make -j$(nproc)
-      install -Dm755 yt-grabber-tui "$SNAPCRAFT_PART_INSTALL/bin/yt-grabber-tui"
+      install -Dm755 yt-grabber-tui $CRAFT_PART_INSTALL/bin/yt-grabber-tui
