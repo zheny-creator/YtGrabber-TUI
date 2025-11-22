@@ -1,28 +1,26 @@
 name: yt-grabber-tui
 version: '1.1-rc'
-summary: TUI утилита для скачивания видео и аудио
+summary: "TUI утилита для скачивания видео и аудио"
 description: |
-Yt-grabber-tui — легкая TUI утилита на основе FTXUI.
+  Yt-grabber-tui — легкая TUI утилита на основе FTXUI.
 base: core24
 confinement: classic
 grade: stable
 
-
 apps:
-yt-grabber-tui:
-command: bin/yt-grabber-tui
-environment:
-LD_LIBRARY_PATH: $SNAP/libs
-plugs:
-- network
-- network-bind
-- removable-media
-
+  yt-grabber-tui:
+    command: bin/yt-grabber-tui
+    environment:
+      LD_LIBRARY_PATH: $SNAP/libs
+    plugs:
+      - network
+      - network-bind
+      - removable-media
 
 parts:
-yt-grabber-tui:
-plugin: dump
-source: .
-organize:
-bin/yt-grabber-tui: bin/yt-grabber-tui
-libs/*: libs/
+  yt-grabber-tui:
+    plugin: dump
+    source: .
+    organize:
+      bin/yt-grabber-tui: bin/yt-grabber-tui
+      libs/*: libs/
